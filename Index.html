@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque de Scénarios - Sylvain GORECKI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f7;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 20px;
+        }
+        .intro {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .module-card {
+            background: #fff;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .module-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+        .module-info h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        .module-info p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .btn-access {
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .btn-access:hover {
+            background-color: #2980b9;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .tag-tsmel { background-color: #e8f6f3; color: #1abc9c; }
+        .tag-fpa { background-color: #fef9e7; color: #f1c40f; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📚 Bibliothèque Pédagogique</h1>
+    <p class="intro">Retrouvez ici l'ensemble des scénarios et ressources de formation.<br>Formateur : Sylvain GORECKI</p>
+
+    <!-- LISTE DES SCÉNARIOS -->
+    
+    <!-- Scénario 1 : TSMEL Recrutement -->
+    <div class="module-card">
+        <div class="module-info">
+            <h3><span class="tag tag-tsmel">TSMEL</span> Recrutement & Intégration</h3>
+            <p>Différence Fiche de poste/Annonce, Méthode STAR, Simulation d'entretien.</p>
+        </div>
+        <!-- Le lien ci-dessous doit correspondre au nom exact de votre fichier HTML sur GitHub -->
+        <a href="scenario-tsmel-recrutement.html" class="btn-access">Voir le Scénario</a>
+    </div>
+
+    <!-- Exemple pour un futur scénario (à décommenter plus tard) -->
+    <!-- 
+    <div class="module-card">
+        <div class="module-info">
+            <h3><span class="tag tag-fpa">FPA</span> Les 3C de Tyler</h3>
+            <p>Comprendre la cohérence pédagogique et l'évaluation.</p>
+        </div>
+        <a href="scenario-tyler.html" class="btn-access">Voir le Scénario</a>
+    </div> 
+    -->
+
+</div>
+
+</body>
+</html>
