@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scénario Pédagogique : Le Onze d'Or - 28/01/2026</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --light-bg: #f8f9fa;
+            --pause-bg: #e8f5e9;
+            --alt-bg: #fff3cd;
+            --text-color: #333;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        header {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 5px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .meta-item span {
+            font-weight: normal;
+            color: #000;
+        }
+
+        /* Table Styling */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        /* Column Specifics */
+        .col-time { width: 110px; font-weight: bold; white-space: nowrap; }
+        .col-phase { font-weight: bold; color: var(--accent-color); }
+        .col-obj { font-style: italic; }
+        .col-alt { background-color: var(--alt-bg); border-left: 2px solid #ffeeba; color: #856404; font-size: 0.9em; }
+        
+        /* Rows Styling */
+        tr:nth-child(even) { background-color: #fcfcfc; }
+        tr:hover { background-color: #f1f1f1; }
+
+        .row-pause {
+            background-color: var(--pause-bg) !important;
+            font-weight: bold;
+            color: #2e7d32;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* Bloom Verbs Highlight */
+        .bloom-verb {
+            font-weight: bold;
+            color: #d35400;
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px dashed var(--accent-color);
+            border-radius: 8px;
+            background-color: #fbfbfb;
+        }
+
+        .btn-quiz {
+            display: inline-block;
+            background-color: #0078d4;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .btn-quiz:hover {
+            background-color: #005a9e;
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #777;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; width: 100%; padding: 0; }
+            iframe { display: none; } /* Don't print the interactive quiz */
+            .quiz-section::after { content: " (Quiz interactif non disponible à l'impression)"; }
+            a { text-decoration: none; color: black; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Scénario Pédagogique : Mise à niveau Excel & Logistique</h1>
+        <div class="meta-info">
+            <div class="meta-item">Date : <span>28/01/2026</span></div>
+            <div class="meta-item">Formateur : <span>Sylvain GORECKI</span></div>
+            <div class="meta-item">Apprenants : <span>3</span></div>
+            <div class="meta-item">Contexte : <span>Mise à niveau Excel appliquée à la gestion de stock (WMS) et initiation Incoterms.</span></div>
+        </div>
+    </header>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-time">Horaire / Durée</th>
+                    <th>Phase</th>
+                    <th>Objectifs Pédagogiques (Bloom)</th>
+                    <th>Contenu / Activités</th>
+                    <th>Méthodes</th>
+                    <th>Supports / Outils</th>
+                    <th>Évaluation</th>
+                    <th>Scénario Alternatif</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 08:30 -->
+                <tr>
+                    <td class="col-time">08h30 - 08h45<br><small>15 min</small></td>
+                    <td class="col-phase">1. Enrôlement</td>
+                    <td class="col-obj"><span class="bloom-verb">Se remémorer</span> le vécu pro.<br><span class="bloom-verb">Créer</span> une dynamique.</td>
+                    <td><strong>Tour de table "Météo de la semaine"</strong><br>Présentation point fort/faible de la semaine (3 min/pers).</td>
+                    <td>Interrogative</td>
+                    <td>-</td>
+                    <td>Diagnostique (Orale)</td>
+                    <td class="col-alt">Si retardataire : Commencer par un brise-glace écrit individuel.</td>
+                </tr>
+
+                <!-- 08:45 -->
+                <tr>
+                    <td class="col-time">08h45 - 09h35<br><small>50 min</small></td>
+                    <td class="col-phase">2. Découverte</td>
+                    <td class="col-obj"><span class="bloom-verb">Identifier</span> les fonctionnalités tableur.<br><span class="bloom-verb">Lister</span> les outils cités.</td>
+                    <td><strong>Lecture "La Victoire du Onze d'Or"</strong><br>Lecture individuelle du Storybook et repérage des fonctions (TCD, RechercheV...).</td>
+                    <td>Active</td>
+                    <td>PDF Storybook</td>
+                    <td>Formative non-formelle</td>
+                    <td class="col-alt">Lecture collective à voix haute si difficulté de lecture détectée.</td>
+                </tr>
+
+                <!-- 09:35 -->
+                <tr>
+                    <td class="col-time">09h35 - 10h00<br><small>25 min</small></td>
+                    <td class="col-phase">3. Appropriation</td>
+                    <td class="col-obj"><span class="bloom-verb">Argumenter</span> sur Excel vs Papier.</td>
+                    <td><strong>Débat : "Pourquoi digitaliser ?"</strong><br>Échange guidé : fiabilité, rapidité, automatisation.</td>
+                    <td>Interro. / Active</td>
+                    <td>Tableau blanc</td>
+                    <td>Formative (Participation)</td>
+                    <td class="col-alt">Faire un tableau comparatif Avantages/Inconvénients en sous-groupes.</td>
+                </tr>
+
+                <!-- PAUSE -->
+                <tr class="row-pause">
+                    <td colspan="8">PAUSE (10h00 - 10h15)</td>
+                </tr>
+
+                <!-- 10:15 -->
+                <tr>
+                    <td class="col-time">10h15 - 11h05<br><small>50 min</small></td>
+                    <td class="col-phase">4. Entraînement (Partie 1)</td>
+                    <td class="col-obj"><span class="bloom-verb">Appliquer</span> règles de saisie.<br><span class="bloom-verb">Reproduire</span> un tableau.</td>
+                    <td><strong>Mise en place du WMS</strong><br>Démonstration interface puis saisie du "Brouillard de réception".</td>
+                    <td>Expositive / Active</td>
+                    <td>PC, Excel, Support Docx</td>
+                    <td>Formative (Observation)</td>
+                    <td class="col-alt">Fournir un fichier pré-saisi à compléter si la frappe est trop lente.</td>
+                </tr>
+
+                <!-- 11:05 -->
+                <tr>
+                    <td class="col-time">11h05 - 11h55<br><small>50 min</small></td>
+                    <td class="col-phase">4. Entraînement (Partie 2)</td>
+                    <td class="col-obj"><span class="bloom-verb">Calculer</span> coûts & quantités.<br><span class="bloom-verb">Utiliser</span> formules de base.</td>
+                    <td><strong>Calculs Logistiques</strong><br>1. <strong>Pose des calculs au tableau blanc</strong> (logique math).<br>2. Traduction en formules Excel.</td>
+                    <td>Active / Démonstrative</td>
+                    <td>Tableau blanc, PC, Excel</td>
+                    <td>Formative (Formules)</td>
+                    <td class="col-alt">Utiliser une fiche mémo syntaxe formules si blocage persistant.</td>
+                </tr>
+
+                <!-- DEJEUNER -->
+                <tr class="row-pause">
+                    <td colspan="8">PAUSE DÉJEUNER (12h00 - 13h00)</td>
+                </tr>
+
+                <!-- 13:00 -->
+                <tr>
+                    <td class="col-time">13h00 - 13h50<br><small>50 min</small></td>
+                    <td class="col-phase">4. Entraînement (Partie 3)</td>
+                    <td class="col-obj"><span class="bloom-verb">Analyser</span> l'état du stock.<br><span class="bloom-verb">Différencier</span> visuellement.</td>
+                    <td><strong>Logique & Visuel</strong><br>Fonction SI (Rupture/OK) et Mise en Forme Conditionnelle (Rouge).</td>
+                    <td>Expositive / Active</td>
+                    <td>PC, Excel</td>
+                    <td>Formative (Test)</td>
+                    <td class="col-alt">Utiliser des filtres couleurs simples sans formule SI complexe.</td>
+                </tr>
+
+                <!-- 13:50 -->
+                <tr>
+                    <td class="col-time">13h50 - 14h40<br><small>50 min</small></td>
+                    <td class="col-phase">4. Entraînement (Partie 4)</td>
+                    <td class="col-obj"><span class="bloom-verb">Synthétiser</span> les données.<br><span class="bloom-verb">Créer</span> un tableau de bord.</td>
+                    <td><strong>Tableau de Bord & TCD</strong><br>Mode "Tableau" et Graphique de répartition par famille.</td>
+                    <td>Active</td>
+                    <td>PC, Excel</td>
+                    <td>Formative (Rendu)</td>
+                    <td class="col-alt">Graphique "Recommandé" automatique si TCD trop complexe.</td>
+                </tr>
+
+                <!-- 14:40 -->
+                <tr>
+                    <td class="col-time">14h40 - 15h00<br><small>20 min</small></td>
+                    <td class="col-phase">4. Entraînement (Fin)</td>
+                    <td class="col-obj"><span class="bloom-verb">Vérifier</span> la cohérence.</td>
+                    <td><strong>Finalisation & Sauvegarde</strong><br>Corrections individuelles et embellissement.</td>
+                    <td>Active</td>
+                    <td>PC, Excel</td>
+                    <td>Formative non-formelle</td>
+                    <td class="col-alt">-</td>
+                </tr>
+
+                <!-- PAUSE -->
+                <tr class="row-pause">
+                    <td colspan="8">PAUSE (15h00 - 15h10)</td>
+                </tr>
+
+                <!-- 15:10 -->
+                <tr>
+                    <td class="col-time">15h10 - 16h00<br><small>50 min</small></td>
+                    <td class="col-phase">5. Évaluation</td>
+                    <td class="col-obj"><span class="bloom-verb">Évaluer</span> les acquis Excel/Logistique.</td>
+                    <td><strong>Quiz de validation "Le Onze d'Or"</strong><br>QCM numérique via MS Forms (voir bas de page).</td>
+                    <td>Interrogative</td>
+                    <td>PC/Smartphone</td>
+                    <td>Formative Formelle (Score)</td>
+                    <td class="col-alt">Version papier du Quiz disponible si panne internet.</td>
+                </tr>
+
+                <!-- 16:00 -->
+                <tr>
+                    <td class="col-time">16h00 - 16h30<br><small>30 min</small></td>
+                    <td class="col-phase">6. Transfert</td>
+                    <td class="col-obj"><span class="bloom-verb">Définir</span> les principaux Incoterms.</td>
+                    <td><strong>Introduction aux Incoterms</strong><br>Diffusion <strong>Vidéo YouTube</strong> "Les Incoterms expliqués" + Synthèse.</td>
+                    <td>Expositive</td>
+                    <td>Vidéo, Diaporama</td>
+                    <td>Diagnostique (Q&R)</td>
+                    <td class="col-alt">Schéma des transferts de risques au tableau si vidéo HS.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="quiz-section">
+        <h3>Validation des Acquis</h3>
+        <p>Veuillez compléter le formulaire ci-dessous à la fin de la séance.</p>
+        <a href="https://forms.cloud.microsoft/r/0FZXF7zqPW" target="_blank" class="btn-quiz">Ouvrir le Quiz dans un nouvel onglet ↗</a>
+        
+        <iframe width="640px" height="480px" src="https://forms.cloud.microsoft/r/0FZXF7zqPW?embed=true" frameborder="0" marginwidth="0" marginheight="0" style="border: none; max-width:100%; max-height:600px" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen></iframe>
+    </div>
+
+    <footer>
+        <p>Généré le 25/01/2026 pour Sylvain GORECKI - Document à usage interne.</p>
+    </footer>
+</div>
+
+</body>
+</html>
