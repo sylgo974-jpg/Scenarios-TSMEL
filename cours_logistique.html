@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mise à Niveau TSMEL - Calculs Logistiques & Excel</title>
+    <style>
+        /* Style général professionnel et sobre */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* En-têtes */
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 40px;
+            font-size: 20px;
+            border-left: 5px solid #2980b9;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #555;
+            font-size: 18px;
+            margin-top: 25px;
+        }
+
+        /* Boites de formules mathématiques */
+        .formula-box {
+            background-color: #e8f4f8;
+            border: 1px solid #b3d7ff;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            margin: 15px 0;
+            font-family: 'Courier New', Courier, monospace;
+            color: #2c3e50;
+        }
+
+        /* Simulation Excel */
+        table.excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+
+        table.excel-table th {
+            background-color: #27ae60; /* Vert Excel */
+            color: white;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #1e8449;
+        }
+
+        table.excel-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        table.excel-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .excel-formula {
+            color: #c0392b;
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #fdf2f2;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        /* Mise en avant spécifique Réunion */
+        .alert-reunion {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        /* Pied de page */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Module de Mise à Niveau : Calculs Commerciaux et Logistiques sur Excel</h1>
+        <p><strong>Public :</strong> TSMEL / TLE<br>
+        <strong>Objectif :</strong> Maîtriser les calculs de rentabilité et de facturation applicables aux prestations logistiques.</p>
+
+        <h2>1. Les Pourcentages en Logistique</h2>
+        <p>Les pourcentages sont indispensables pour le suivi des KPI (taux de service, taux de remplissage, avaries).</p>
+
+        <h3>A. La Formule Mathématique</h3>
+        <div class="formula-box">
+            Pourcentage = (Valeur Partielle / Valeur Totale) &times; 100
+        </div>
+        <p><em>Exemple :</em> 45 colis avariés sur 1500 expédiés. <br>Calcul : 45 ÷ 1500 = 0,03 soit 3%.</p>
+
+        <h3>B. Application Excel</h3>
+        <p>Dans Excel, <strong>ne multipliez pas par 100</strong>. Utilisez le bouton de formatage "%".</p>
+        
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>Cellule</th>
+                    <th>Contenu</th>
+                    <th>Formule à saisir</th>
+                    <th>Résultat visuel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>A1</td>
+                    <td>1500 (Total)</td>
+                    <td>-</td>
+                    <td>1500</td>
+                </tr>
+                <tr>
+                    <td>B1</td>
+                    <td>45 (Avaries)</td>
+                    <td>-</td>
+                    <td>45</td>
+                </tr>
+                <tr>
+                    <td>C1</td>
+                    <td><em>Le Taux</em></td>
+                    <td><span class="excel-formula">=B1/A1</span></td>
+                    <td><strong>3,00%</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>2. La TVA à 8,5 % (Spécificité DOM)</h2>
+        <div class="alert-reunion">
+            <strong>Attention :</strong> Ce module utilise le taux en vigueur à la Réunion (8,5 %).
+        </div>
+
+        <h3>A. Du Hors Taxe (HT) vers le TTC</h3>
+        <div class="formula-box">
+            Prix TTC = Prix HT &times; 1,085
+        </div>
+
+        <h3>B. Du TTC vers le Hors Taxe (HT)</h3>
+        <p>C'est l'erreur la plus fréquente. Pour retrouver le HT, il faut <strong>diviser</strong>.</p>
+        <div class="formula-box">
+            Prix HT = Prix TTC &divide; 1,085
+        </div>
+
+        <h3>C. Syntaxe Excel</h3>
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>Opération</th>
+                    <th>Si Prix en A2</th>
+                    <th>Formule Excel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Calculer le TTC</td>
+                    <td>100 €</td>
+                    <td><span class="excel-formula">=A2*1,085</span></td>
+                </tr>
+                <tr>
+                    <td>Retrouver le HT</td>
+                    <td>108,50 €</td>
+                    <td><span class="excel-formula">=A2/1,085</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. Marges et Rentabilité</h2>
+        <p>Il est crucial de distinguer le <strong>Taux de Marque</strong> (vision commerciale) du <strong>Taux de Marge</strong> (vision achat).</p>
+
+        <h3>A. Taux de Marque vs Taux de Marge</h3>
+        <ul>
+            <li><strong>Taux de Marque (Marge sur CA) :</strong> Pour savoir quel pourcentage du chiffre d'affaires l'entreprise conserve.</li>
+            <li><strong>Taux de Marge (Coefficient) :</strong> Pour savoir combien on ajoute au prix d'achat.</li>
+        </ul>
+
+        <h3>B. Calcul du Prix de Vente (Méthode du Taux de Marque)</h3>
+        <p>C'est la méthode la plus utilisée pour construire une offre tarifaire. Si vous voulez garder 20% de marge sur votre vente :</p>
+        
+        <div class="formula-box">
+            Prix Vente = Prix Achat &divide; (1 - Taux Marque)
+        </div>
+
+        <h3>C. Exemple Excel (Simulation Cotation)</h3>
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>Cellule</th>
+                    <th>Intitulé</th>
+                    <th>Valeur</th>
+                    <th>Formule / Logique</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>A2</td>
+                    <td>Coût d'achat (Affrètement)</td>
+                    <td>800 €</td>
+                    <td>Donnée fournisseur</td>
+                </tr>
+                <tr>
+                    <td>B2</td>
+                    <td>Marge visée (Marque)</td>
+                    <td>20%</td>
+                    <td>Format pourcentage</td>
+                </tr>
+                <tr>
+                    <td>C2</td>
+                    <td><strong>Prix de Vente HT</strong></td>
+                    <td><strong>1 000 €</strong></td>
+                    <td><span class="excel-formula">=A2/(1-B2)</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <p><em>Analyse : Si je divise 800 par 0,8 (soit 100% - 20%), j'obtiens 1000 €. Ma marge est bien de 200 €, soit 20% de 1000 €.</em></p>
+
+        <h2>4. Exercice de Synthèse</h2>
+        <p><strong>Scénario :</strong> Expédition vers Saint-Pierre.<br>
+        Coût de revient palette : 120 € | Marge visée : 30 % | TVA : 8,5 %.</p>
+
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>Ligne</th>
+                    <th>Libellé</th>
+                    <th>Formule Excel</th>
+                    <th>Résultat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Prix de Vente HT</td>
+                    <td><span class="excel-formula">=120 / (1 - 30%)</span></td>
+                    <td>171,43 €</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Montant TVA</td>
+                    <td><span class="excel-formula">=171,43 * 8,5%</span></td>
+                    <td>14,57 €</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Prix Vente TTC</strong></td>
+                    <td><span class="excel-formula">=171,43 + 14,57</span></td>
+                    <td><strong>186,00 €</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>Support de formation interne - Usage réservé aux stagiaires TSMEL / TLE</p>
+        </div>
+    </div>
+
+</body>
+</html>
