@@ -35,7 +35,6 @@
         }
 
         /* --- ACCORDÉONS (TIROIRS) --- */
-        /* Le grand tiroir AT */
         details.at-drawer {
             margin-bottom: 15px;
             border: 1px solid #ddd;
@@ -51,13 +50,12 @@
             font-weight: bold;
             font-size: 1.1rem;
             cursor: pointer;
-            list-style: none; /* Cache la flèche par défaut */
+            list-style: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        /* Le sous-tiroir CP */
         details.cp-drawer {
             margin: 10px 20px;
             border-left: 3px solid #3498db;
@@ -74,32 +72,20 @@
             transition: background 0.2s;
         }
         
-        summary.cp-header:hover {
-            background-color: #e8f6f3;
-            color: #1abc9c;
-        }
+        summary.cp-header:hover { background-color: #e8f6f3; color: #1abc9c; }
 
-        /* Petite icône personnalisée pour les tiroirs */
-        summary::after {
-            content: '+'; 
-            font-weight: bold;
-            float: right;
-        }
-        details[open] > summary::after {
-            content: '-';
-        }
+        summary::after { content: '+'; font-weight: bold; float: right; }
+        details[open] > summary::after { content: '-'; }
 
-        /* --- CONTENU DES CARTES SCÉNARIOS --- */
-        .drawer-content {
-            padding: 10px 10px 20px 20px;
-        }
+        /* --- CARTES SCÉNARIOS --- */
+        .drawer-content { padding: 10px 10px 20px 20px; }
 
         .module-card {
             background: #fff;
             border: 1px solid #e1e4e8;
             border-radius: 6px;
             padding: 15px;
-            margin-bottom: 10px; /* Espace entre les cartes */
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -108,7 +94,7 @@
         
         .module-card:hover {
             border-color: #3498db;
-            transform: translateX(5px); /* Petit effet de glissement */
+            transform: translateX(5px);
             transition: 0.3s;
         }
 
@@ -123,14 +109,12 @@
             border-radius: 20px;
             font-weight: bold;
             font-size: 0.8rem;
-            white-space: nowrap; /* Empêche le bouton de se casser en deux lignes */
+            white-space: nowrap;
         }
         .btn-access:hover { background-color: #2980b9; }
 
         .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; margin-right: 5px; font-weight: bold; }
         .tag-tsmel { background-color: #e8f6f3; color: #1abc9c; }
-        .tag-fpa { background-color: #fef9e7; color: #f1c40f; }
-
     </style>
 </head>
 <body>
@@ -141,130 +125,67 @@
 
     <details class="at-drawer">
         <summary class="at-header">AT1 : Coordonner, réguler et contrôler les flux</summary>
-        
-        <details class="cp-drawer">
-            <summary class="cp-header">CP1 : Contrôler les documents et opérations</summary>
-            <div class="drawer-content">
-                <div class="module-card">
-                    <div class="module-info">
-                        <h3><span class="tag tag-tsmel">TSMEL</span> Recrutement & Intégration</h3>
-                        <p>Différence Fiche de poste/Annonce, Méthode STAR.</p>
-                    </div>
-                    <a href="AT1/CP1/at1cp2TSMEL_20_01.html" class="btn-access">Ouvrir</a>
-                </div>
-            </div>
-        </details>
-
-        <details class="cp-drawer">
-            <summary class="cp-header">CP2 : Conformité implantation et stocks</summary>
-            <div class="drawer-content">
-                
-                <div class="module-card">
-                    <div class="module-info">
-                        <h3><span class="tag tag-tsmel">TSMEL</span> Gestion de Stock</h3>
-                        <p>Inventaires, ABC, et taux de rotation.</p>
-                    </div>
-                    <a href="AT1/CP2/Scenario-12-01-tsmel.html" class="btn-access">Ouvrir</a>
-                </div>
-
-            </div>
-        </details>
-
-        <details class="cp-drawer">
-            <summary class="cp-header">CP3 : Sécurité manutention et stockage</summary>
-            <div class="drawer-content">
-                <p style="color:#aaa; font-style:italic;">Aucun scénario pour le moment.</p>
-            </div>
-        </details>
-
-        <details class="cp-drawer">
-            <summary class="cp-header">CP4 : Adapter activités au quotidien</summary>
-            <div class="drawer-content">
-                </div>
-        </details>
+        <div class="drawer-content">
+            <details class="cp-drawer"><summary class="cp-header">CP1</summary></details>
+            <details class="cp-drawer"><summary class="cp-header">CP2</summary></details>
+            <details class="cp-drawer"><summary class="cp-header">CP3</summary></details>
+            <details class="cp-drawer"><summary class="cp-header">CP4</summary></details>
+        </div>
     </details>
 
     <details class="at-drawer">
         <summary class="at-header">AT2 : Planifier et encadrer une équipe</summary>
-        
-        <details class="cp-drawer">
-            <summary class="cp-header">CP5 : Planning des opérateurs</summary>
-            <div class="drawer-content">
-                 <div class="module-card">
-                    <div class="module-info">
-                        <h3><span class="tag tag-tsmel">TSMEL</span> Mise à niveau Excel 1</h3>
-                        <p>Scénario Le Onze d'Or.</p>
-                    </div>
-                    <a href="AT2/CP5/Scenario_Onze_Or.html" class="btn-access">Ouvrir</a>
-                </div>
-            </div>
-        </details>
-
-        <details class="cp-drawer">
-            <summary class="cp-header">CP6 : Suivre l'activité (Tableau de bord)</summary>
-            <div class="drawer-content">
-                <div class="module-card">
-                    <div class="module-info">
-                        <h3><span class="tag tag-tsmel">TSMEL</span> Mise à niveau Excel 2</h3>
-                        <p>Scénario Calculs commerciaux / Logistique.</p>
-                    </div>
-                    <a href="AT2/CP6/cours_logistique.html" class="btn-access">Ouvrir</a>
-                </div>
-            </div>
-        </details>
-
-        <details class="cp-drawer">
-            <summary class="cp-header">CP7 : Encadrer une équipe</summary>
-            <div class="drawer-content">
-                 <div class="module-card">
-                    <div class="module-info">
-                        <h3><span class="tag tag-tsmel">TSMEL</span> TOSA Word</h3>
-                        <p>Mise à niveau traitement de texte.</p>
-                    </div>
-                    <a href="AT2/CP7/mise_a_niveau_tosa_word.html" class="btn-access">Ouvrir</a>
-                </div>
-            </div>
-        </details>
-
-        <details class="cp-drawer">
-            <summary class="cp-header">CP8 : Amélioration continue</summary>
-            <div class="drawer-content">
-                </div>
-        </details>
+        <div class="drawer-content">
+            <details class="cp-drawer"><summary class="cp-header">CP5</summary></details>
+            <details class="cp-drawer"><summary class="cp-header">CP6</summary></details>
+            <details class="cp-drawer"><summary class="cp-header">CP7</summary></details>
+            <details class="cp-drawer"><summary class="cp-header">CP8</summary></details>
+        </div>
     </details>
-    <details class="at-drawer">
-        <summary class="at-header">Autres Scénarios & Ressources Diverses</summary>
+
+    <details class="at-drawer" open> <summary class="at-header">Autres Scénarios / En vrac</summary>
         
         <div class="drawer-content">
             
             <div class="module-card">
                 <div class="module-info">
-                    <h3><span class="tag tag-fpa">Transversal</span> Soft Skills & Communication</h3>
-                    <p>Atelier sur la communication non-verbale en entrepôt.</p>
+                    <h3><span class="tag tag-tsmel">TSMEL</span> Recrutement & Intégration</h3>
+                    <p>Fiche de poste, Annonce, STAR.</p>
                 </div>
-                <a href="AUTRES/communication_non_verbale.html" class="btn-access">Ouvrir</a>
+                <a href="at1cp2TSMEL_20_01.html" class="btn-access">Voir le Scénario</a>
             </div>
 
             <div class="module-card">
                 <div class="module-info">
-                    <h3><span class="tag tag-tsmel">Outils</span> Glossaire Logistique</h3>
-                    <p>Liste des termes techniques et acronymes (WMS, TMS...).</p>
+                    <h3><span class="tag tag-tsmel">TSMEL</span> Gestion de Stock</h3>
+                    <p>Inventaires, ABC, taux de rotation.</p>
                 </div>
-                <a href="AUTRES/glossaire.html" class="btn-access">Ouvrir</a>
+                <a href="Scenario-12-01-tsmel.html" class="btn-access">Voir le Scénario</a>
             </div>
 
-            <details class="cp-drawer">
-                <summary class="cp-header">Archives / Anciens Cours</summary>
-                <div class="drawer-content">
-                    <div class="module-card">
-                        <div class="module-info">
-                            <h3>Vieux scénario 2023</h3>
-                            <p>Pour référence seulement.</p>
-                        </div>
-                        <a href="AUTRES/ARCHIVES/vieux_tp.html" class="btn-access">Ouvrir</a>
-                    </div>
+            <div class="module-card">
+                <div class="module-info">
+                    <h3><span class="tag tag-tsmel">TSMEL</span> TOSA Word</h3>
+                    <p>Mise à niveau Word.</p>
                 </div>
-            </details>
+                <a href="mise_a_niveau_tosa_word.html" class="btn-access">Voir le Scénario</a>
+            </div>
+
+            <div class="module-card">
+                <div class="module-info">
+                    <h3><span class="tag tag-tsmel">TSMEL</span> Mise à niveau Excel 1</h3>
+                    <p>Scénario Le Onze d'Or.</p>
+                </div>
+                <a href="Scenario_Onze_Or.html" class="btn-access">Voir le Scénario</a>
+            </div>
+
+            <div class="module-card">
+                <div class="module-info">
+                    <h3><span class="tag tag-tsmel">TLE</span> Mise à niveau Excel 2</h3>
+                    <p>Scénario Calculs commerciaux / Logistique.</p>
+                </div>
+                <a href="cours_logistique.html" class="btn-access">Voir le Scénario</a>
+            </div>
 
         </div>
     </details>
@@ -273,4 +194,3 @@
 
 </body>
 </html>
-
