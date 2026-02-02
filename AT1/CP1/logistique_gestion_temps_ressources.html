@@ -116,6 +116,13 @@
             border-radius: 4px;
             margin-bottom: 15px;
         }
+        .work-box {
+            background-color: #f0f9ff;
+            border: 1px dashed #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
 
         /* TABLEAUX EXCEL STYLE */
         .excel-table {
@@ -642,9 +649,77 @@
                     <div class="alert-box">
                         💡 <strong>Conseil du formateur :</strong> Commencez par calculer le volume total de lignes (450 x 2) avant de calculer le temps de travail.
                     </div>
+
+                    <!-- NEW: CONSIGNES SECTION -->
+                    <h2 class="log-h2">3. Consignes & Travail à Réaliser</h2>
+                    
+                    <div class="work-box border-l-4 border-blue-400">
+                        <h3 class="font-bold text-blue-900 mb-2">Étape 1 : Le Planning (Temps)</h3>
+                        <p class="text-sm text-gray-700 mb-2">Reproduisez et complétez ce tableau de calcul :</p>
+                        <table class="excel-table">
+                            <thead>
+                                <tr>
+                                    <th>Libellé</th>
+                                    <th>Calcul (Formule)</th>
+                                    <th>Résultat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                </tr>
+                                <tr>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                </tr>
+                                <tr>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                    <td class="h-8 bg-white border border-gray-200"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="work-box border-l-4 border-green-400">
+                        <h3 class="font-bold text-green-900 mb-2">Étape 2 : Le Choix Financier</h3>
+                        <p class="text-sm text-gray-700 mb-4">Calculez le coût total pour chaque option et choisissez la meilleure stratégie (Coût vs Délai).</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 border rounded shadow-sm">
+                                <h4 class="font-bold text-gray-800 border-b pb-1 mb-2">Option A : Classique (J+2)</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li>Coût Transport : ...... €</li>
+                                    <li>Pénalités Retard : ...... €</li>
+                                    <li class="font-bold pt-2">TOTAL : ...... €</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-4 border rounded shadow-sm">
+                                <h4 class="font-bold text-gray-800 border-b pb-1 mb-2">Option B : Express (J+1)</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li>Coût Transport : ...... €</li>
+                                    <li>Pénalités Retard : 0 €</li>
+                                    <li class="font-bold pt-2">TOTAL : ...... €</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="work-box border-l-4 border-purple-400">
+                        <h3 class="font-bold text-purple-900 mb-2">Étape 3 : Le Point Mort (Expert)</h3>
+                        <p class="text-sm text-gray-700 mb-2">Déterminez graphiquement ou par le calcul à partir de quel prix l'Express devient moins rentable que la pénalité.</p>
+                        
+                        <div class="bg-white p-2 rounded border" style="height: 300px;">
+                            <canvas id="breakEvenChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 text-center"><em>Graphique de Rentabilité : Intersection = Seuil de bascule</em></p>
+                    </div>
                 
                     <h2 class="log-h2 cursor-pointer hover:text-blue-600 transition" onclick="app.focusCodeInput()">
-                        <i class="fa-solid fa-lock"></i> 3. Le Corrigé Type
+                        <i class="fa-solid fa-lock"></i> 4. Le Corrigé Type
                     </h2>
 
                     <!-- Interface de verrouillage -->
@@ -880,6 +955,12 @@
 
                 this.currentView = viewId;
                 window.scrollTo(0,0);
+                
+                // Init Case Study Chart only if navigating to simulator section (simple optimization)
+                if(viewId === 'simulator' && !this.breakEvenChartInstance) {
+                    // Small timeout to ensure DOM is ready if inside hidden div logic
+                    setTimeout(() => this.initBreakEvenChart(), 100);
+                }
             },
 
             // --- Simulator Switching Logic ---
@@ -894,6 +975,10 @@
                     document.getElementById('sim-logisti').classList.remove('hidden');
                     document.getElementById('btn-tropik').className = "px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-blue-900 transition-all";
                     document.getElementById('btn-logisti').className = "px-4 py-2 rounded-md text-sm font-bold bg-blue-100 text-blue-900 shadow-sm transition-all flex items-center gap-2";
+                    
+                    if(!this.breakEvenChartInstance) {
+                         this.initBreakEvenChart();
+                    }
                 }
             },
 
@@ -1008,6 +1093,7 @@
 
             // --- Chart.js Instances ---
             chartInstance: null,
+            breakEvenChartInstance: null,
 
             initChart: function() {
                 const ctx = document.getElementById('etpChart');
@@ -1031,6 +1117,75 @@
                 this.chartInstance.data.datasets[0].data = [baseNeeded, totalAvailable];
                 this.chartInstance.data.datasets[1].data = [incidentHours, 0];
                 this.chartInstance.update();
+            },
+
+            // --- Break Even Chart (LogistiTech) ---
+            initBreakEvenChart: function() {
+                const ctx = document.getElementById('breakEvenChart');
+                if(!ctx) return;
+                
+                // We want to visualize Total Cost vs Price of Express.
+                // Fixed line: Option A (Classique) = 23 (8 + 15).
+                // Variable line: Option B (Express) = x (Price).
+                
+                // Data points for visualisation
+                // X axis: Prix Express Transport (from 15 to 30)
+                // Y axis: Total Cost impact (Unitary)
+                
+                this.breakEvenChartInstance = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['15€', '18€', '21€', '23€', '25€', '28€', '30€'],
+                        datasets: [
+                            {
+                                label: 'Coût Option A (Fixe: Classique + Pénalité)',
+                                data: [23, 23, 23, 23, 23, 23, 23],
+                                borderColor: '#dc2626', // Red
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                borderDash: [5, 5]
+                            },
+                            {
+                                label: 'Coût Option B (Variable: Prix Express)',
+                                data: [15, 18, 21, 23, 25, 28, 30],
+                                borderColor: '#16a34a', // Green
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            y: {
+                                title: { display: true, text: 'Coût Total Unitaire (€)' },
+                                min: 10,
+                                max: 35
+                            },
+                            x: {
+                                title: { display: true, text: 'Prix du Transport Express (€)' }
+                            }
+                        },
+                        plugins: {
+                            annotation: {
+                                annotations: {
+                                    point1: {
+                                        type: 'point',
+                                        xValue: '23€',
+                                        yValue: 23,
+                                        backgroundColor: 'orange',
+                                        radius: 6,
+                                        label: { content: 'Seuil', enabled: true }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
             }
         };
 
