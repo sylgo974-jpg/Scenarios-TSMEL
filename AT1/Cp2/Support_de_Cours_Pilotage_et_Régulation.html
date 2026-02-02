@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Chosen Palette: Warm Sand & Deep Indigo - High legibility, professional and calm for complex data. -->
+    <!-- Chosen Palette: Warm Sand & Deep Indigo -->
     
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #fdfbf7; }
@@ -45,22 +45,27 @@
             background-color: #e2e8f0;
             color: #1e1b4b;
         }
+        .alert-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+        .lever-item {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lever-item:hover {
+            transform: scale(1.02);
+        }
+        .drop-zone {
+            transition: all 0.3s;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Application Structure Plan: 
-         1. Header: Branding and Course Metadata.
-         2. Tabbed Navigation: Contextual sections (Fondamentaux, Pareto, Eisenhower, Formules).
-         3. Section Fondamentaux: Supervision vs Regulation intro.
-         4. Section Pareto: Interactive 20/80 visualization to explain why we prioritize "Premium" orders.
-         5. Section Eisenhower: Interactive matrix for the LogistiTech crash events.
-         6. Section Formules: Key calculations (HH, ROI, Productivity) with concrete examples.
-    -->
-
     <!-- Header -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-4">
                 <div class="w-12 h-12 bg-indigo-900 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">TS</div>
                 <div>
@@ -68,11 +73,14 @@
                     <p class="text-xs font-medium text-slate-500 uppercase">Module AT1 CP2 | Sylvain GORECKI</p>
                 </div>
             </div>
-            <nav class="flex space-x-2 mt-4 md:mt-0 bg-slate-100 p-1 rounded-lg text-sm font-medium overflow-x-auto">
-                <button onclick="switchTab('intro')" id="tab-intro" class="px-4 py-2 rounded-md active-tab transition-all whitespace-nowrap">Fondamentaux</button>
-                <button onclick="switchTab('pareto')" id="tab-pareto" class="px-4 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Loi 20/80 (Pareto)</button>
-                <button onclick="switchTab('matrix')" id="tab-matrix" class="px-4 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Matrice Eisenhower</button>
-                <button onclick="switchTab('formulas')" id="tab-formulas" class="px-4 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Formules Clés</button>
+            <nav class="flex space-x-1 mt-4 md:mt-0 bg-slate-100 p-1 rounded-lg text-sm font-medium overflow-x-auto max-w-full">
+                <button onclick="switchTab('guide')" id="tab-guide" class="px-3 py-2 rounded-md active-tab transition-all whitespace-nowrap font-bold text-amber-500 bg-amber-50 border border-amber-200">Guide Animation</button>
+                <button onclick="switchTab('case')" id="tab-case" class="px-3 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Situation</button>
+                <button onclick="switchTab('levers')" id="tab-levers" class="px-3 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Leviers</button>
+                <button onclick="switchTab('intro')" id="tab-intro" class="px-3 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Fondamentaux</button>
+                <button onclick="switchTab('pareto')" id="tab-pareto" class="px-3 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Pareto</button>
+                <button onclick="switchTab('matrix')" id="tab-matrix" class="px-3 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Eisenhower</button>
+                <button onclick="switchTab('formulas')" id="tab-formulas" class="px-3 py-2 rounded-md inactive-tab transition-all whitespace-nowrap">Formules</button>
             </nav>
         </div>
     </header>
@@ -80,269 +88,311 @@
     <!-- Main Content -->
     <main class="flex-grow w-full max-w-6xl mx-auto px-6 py-8">
 
-        <!-- SECTION 1: FONDAMENTAUX -->
-        <section id="view-intro" class="space-y-8 animate-fade-in">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Concept Card 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                    <h2 class="text-2xl font-bold text-indigo-900 mb-4">Supervision</h2>
-                    <div class="flex items-start space-x-4 mb-4">
-                        <div class="bg-blue-100 text-blue-700 p-2 rounded-lg text-2xl">👁️</div>
-                        <p class="text-slate-600 leading-relaxed">
-                            C'est l'action de <strong>surveiller</strong> le déroulement des opérations pour vérifier leur conformité avec le plan prévu. C'est une posture d'observation et de contrôle (Tableaux de bord, KPI).
-                        </p>
+        <!-- SECTION GUIDE D'ANIMATION -->
+        <section id="view-guide" class="space-y-8 animate-fade-in">
+            <div class="bg-amber-50 p-6 rounded-xl border border-amber-100 mb-6">
+                <h2 class="text-2xl font-bold text-amber-900 mb-2">Guide d'Animation (Formateur)</h2>
+                <p class="text-amber-800">Fil conducteur détaillé de la journée.</p>
+            </div>
+
+            <!-- MATIN -->
+            <div class="mb-8">
+                <h3 class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-4 border-b border-slate-200 pb-2">Matinée (08h30 - 12h30)</h3>
+                
+                <!-- Séquence 1 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                    <div class="bg-indigo-900 text-white px-6 py-4 flex justify-between items-center">
+                        <div><span class="bg-indigo-700 text-xs font-bold px-2 py-1 rounded text-indigo-100 mr-2">09h15 - 10h00</span><span class="font-bold">Phase Découverte : Crash WMS</span></div>
+                        <span class="text-xs italic opacity-80">Active</span>
                     </div>
-                    <ul class="space-y-2 text-sm text-slate-500 border-t border-slate-100 pt-4">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>Constat des écarts</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>Vision globale</li>
-                    </ul>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <strong class="text-indigo-900 block mb-2">👨‍🏫 Formateur (M. Morel)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-slate-600">
+                                <li>Lance l'alerte (Onglet Situation).</li>
+                                <li>Exige un chiffrage factuel du retard.</li>
+                                <li>Refuse les excuses techniques.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded">
+                            <strong class="text-slate-700 block mb-2">👩‍💻 Apprenants</strong>
+                            <p class="text-slate-600">Analysent le Dashboard, calculent les 30h de retard (2h x 15 colis), ressentent la pression.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Concept Card 2 -->
-                <div class="bg-indigo-50 p-8 rounded-2xl shadow-md border border-indigo-100">
-                    <h2 class="text-2xl font-bold text-indigo-900 mb-4">Régulation</h2>
-                    <div class="flex items-start space-x-4 mb-4">
-                        <div class="bg-indigo-200 text-indigo-800 p-2 rounded-lg text-2xl">⚙️</div>
-                        <p class="text-indigo-900 leading-relaxed">
-                            C'est l'action d'<strong>intervenir</strong> pour corriger un écart constaté. C'est une posture d'action et de décision pour ramener le système à l'équilibre (Leviers RH, Techniques, Organisationnels).
-                        </p>
+                <!-- Séquence 2 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-teal-900 text-white px-6 py-4 flex justify-between items-center">
+                        <div><span class="bg-teal-700 text-xs font-bold px-2 py-1 rounded text-teal-100 mr-2">10h15 - 11h00</span><span class="font-bold">Phase Appropriation : Leviers</span></div>
+                        <span class="text-xs italic opacity-80">Expositive / Active</span>
                     </div>
-                    <ul class="space-y-2 text-sm text-indigo-700 border-t border-indigo-200 pt-4">
-                        <li class="flex items-center"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-2"></span>Action corrective</li>
-                        <li class="flex items-center"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-2"></span>Retour à la normale</li>
-                    </ul>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <strong class="text-teal-900 block mb-2">👨‍🏫 Formateur</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-slate-600">
+                                <li>Présente l'onglet <strong>Leviers</strong>.</li>
+                                <li>Lance l'atelier de classement interactif.</li>
+                                <li>Explique le graphique Coût/Impact.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded">
+                            <strong class="text-slate-700 block mb-2">👩‍💻 Apprenants</strong>
+                            <p class="text-slate-600">Classent les actions (RH/Tech/Orga) et débattent de leur impact réel.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Context Box -->
-            <div class="bg-amber-50 p-6 rounded-xl border-l-4 border-amber-500">
-                <h3 class="text-lg font-bold text-amber-900 mb-2">Pourquoi est-ce crucial pour le TSMEL ?</h3>
-                <p class="text-amber-800">
-                    Le TSMEL n'est pas payé pour constater qu'il y a un problème (Supervision), mais pour trouver la solution la moins coûteuse et la plus efficace pour le résoudre (Régulation). C'est l'objectif de notre cas "LogistiTech".
-                </p>
-            </div>
-        </section>
+            <!-- APRES-MIDI (NEW) -->
+            <div>
+                <h3 class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-4 border-b border-slate-200 pb-2">Après-Midi (13h30 - 16h30)</h3>
 
-        <!-- SECTION 2: PARETO (20/80) -->
-        <section id="view-pareto" class="hidden space-y-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-2xl font-bold text-indigo-900 mb-2">La Loi de Pareto (20/80) & Méthode ABC</h2>
-                <p class="text-slate-600">
-                    En régulation logistique, on ne peut pas tout sauver en même temps. Il faut prioriser. La loi de Pareto nous dit que <strong>20% des causes produisent 80% des effets</strong>.
-                </p>
-            </div>
+                <!-- Séquence 3 : WAR ROOM -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                    <div class="bg-red-900 text-white px-6 py-4 flex justify-between items-center">
+                        <div>
+                            <span class="bg-red-700 text-xs font-bold px-2 py-1 rounded text-red-100 mr-2">13h30 - 14h20</span>
+                            <span class="font-bold">Entraînement : Simulation "War Room"</span>
+                        </div>
+                        <span class="text-xs italic opacity-80">Active (Calculs)</span>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <strong class="text-red-900 block border-b border-red-100 pb-1">👨‍🏫 Formateur (Facilitateur)</strong>
+                            <ul class="list-disc pl-4 space-y-2 text-slate-700">
+                                <li>Distribue le fichier Excel (ou demande d'ouvrir une feuille blanche).</li>
+                                <li>Affiche l'onglet <strong>Formules</strong> pour aide.</li>
+                                <li>Vérifie les hypothèses : <em>"Attention, vous n'avez que 20 préparateurs, pas 25 !"</em>.</li>
+                                <li>Interpelle sur le coût caché de la perte client (Option B vs A).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded border border-red-100">
+                            <strong class="text-red-800 block mb-2 border-b border-red-200 pb-1">👩‍💻 Apprenants (Analystes)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-slate-700">
+                                <li>Calculent le coût Option A (Retard + Pénalités).</li>
+                                <li>Calculent le coût Option B (Express).</li>
+                                <li>Réalisent que l'Option B est plus chère financièrement mais sauve le client.</li>
+                                <li>Préparent leurs arguments chiffrés.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Text Content -->
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                        <h3 class="font-bold text-lg text-slate-800 mb-3">Application Logistique</h3>
-                        <ul class="space-y-4">
-                            <li class="flex flex-col">
-                                <span class="font-semibold text-indigo-600">Stocks (Classe A)</span>
-                                <span class="text-sm text-slate-500">20% des références font 80% de la valeur du stock. À contrôler quotidiennement.</span>
-                            </li>
-                            <li class="flex flex-col">
-                                <span class="font-semibold text-indigo-600">Préparation (Classe A)</span>
-                                <span class="text-sm text-slate-500">20% des références génèrent 80% des mouvements (Fast Movers). À placer près des quais.</span>
-                            </li>
-                            <li class="flex flex-col">
-                                <span class="font-semibold text-indigo-600">Litiges</span>
-                                <span class="text-sm text-slate-500">20% des clients génèrent 80% des réclamations. À surveiller de près (ex: Clients VIP).</span>
-                            </li>
+                <!-- Séquence 4 : EISENHOWER -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                    <div class="bg-purple-900 text-white px-6 py-4 flex justify-between items-center">
+                        <div>
+                            <span class="bg-purple-700 text-xs font-bold px-2 py-1 rounded text-purple-100 mr-2">14h20 - 15h00</span>
+                            <span class="font-bold">Appropriation : Matrice d'Eisenhower</span>
+                        </div>
+                        <span class="text-xs italic opacity-80">Active / Interrogative</span>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <strong class="text-purple-900 block border-b border-purple-100 pb-1">👨‍🏫 Formateur</strong>
+                            <ul class="list-disc pl-4 space-y-2 text-slate-700">
+                                <li>Affiche l'onglet <strong>Eisenhower</strong>.</li>
+                                <li>Lance des "tâches volantes" à la cantonade : <em>"Le téléphone sonne, c'est un client VIP. Urgent ou Important ?"</em>.</li>
+                                <li>Demande de prioriser les 3 actions de crise : 1. Appeler Express (Urgent/Imp), 2. Informer Client (Urgent/Imp), 3. Réparer Cause Racine (Imp/Pas Urgent).</li>
+                            </ul>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded border border-purple-100">
+                            <strong class="text-purple-800 block mb-2 border-b border-purple-200 pb-1">👩‍💻 Apprenants</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-slate-700">
+                                <li>Tri des 15 tâches du scénario.</li>
+                                <li>Comprennent qu'ils doivent <strong>déléguer</strong> le non-important pour se focaliser sur la crise.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAUSE 15h00 - 15h10 -->
+                <div class="flex items-center justify-center my-4 opacity-50">
+                    <div class="h-px bg-slate-300 w-full"></div>
+                    <span class="px-4 text-xs font-bold text-slate-400 uppercase">PAUSE (10 min)</span>
+                    <div class="h-px bg-slate-300 w-full"></div>
+                </div>
+
+                <!-- Séquence 5 : PITCH -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                    <div class="bg-green-900 text-white px-6 py-4 flex justify-between items-center">
+                        <div>
+                            <span class="bg-green-700 text-xs font-bold px-2 py-1 rounded text-green-100 mr-2">15h10 - 16h00</span>
+                            <span class="font-bold">Transfert : Jeu de Rôle "Le Pitch"</span>
+                        </div>
+                        <span class="text-xs italic opacity-80">Active (Simulation)</span>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <strong class="text-green-900 block border-b border-green-100 pb-1">👨‍🏫 Formateur (Directeur M. Morel)</strong>
+                            <ul class="list-disc pl-4 space-y-2 text-slate-700">
+                                <li>Prend une posture exigeante et pressée.</li>
+                                <li>Pose des objections : <em>"C'est trop cher votre express !", "Pourquoi on ne fait pas d'heures sup ?"</em>.</li>
+                                <li>Évalue avec la Grille (voir support papier ou numérique).</li>
+                                <li>Valide uniquement si l'argument "Satisfaction Client" est utilisé.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded border border-green-100">
+                            <strong class="text-green-800 block mb-2 border-b border-green-200 pb-1">👩‍💻 Apprenants (Régulateurs)</strong>
+                            <ul class="list-disc pl-4 space-y-1 text-slate-700">
+                                <li>Présentent leur plan en 3 min chrono.</li>
+                                <li>Utilisent les termes techniques (ROI, NPS, Mode dégradé).</li>
+                                <li>Défendent l'investissement pour sauver l'image.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Séquence 6 : BILAN -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-700 text-white px-6 py-4 flex justify-between items-center">
+                        <div>
+                            <span class="bg-slate-500 text-xs font-bold px-2 py-1 rounded text-slate-100 mr-2">16h00 - 16h30</span>
+                            <span class="font-bold">Synthèse & Évaluation</span>
+                        </div>
+                        <span class="text-xs italic opacity-80">Interrogative</span>
+                    </div>
+                    <div class="p-6 text-sm">
+                        <strong class="text-slate-800 block mb-2">🏁 Clôture de la journée</strong>
+                        <p class="text-slate-600 mb-2">Le formateur lance le Microsoft Forms final pour le Journal de Bord.</p>
+                        <ul class="list-disc pl-4 space-y-1 text-slate-600">
+                            <li>Feedback à chaud : <em>"Quel est le mot clé du jour ?"</em> (Réponses attendues : Régulation, ROI, Client).</li>
+                            <li>Dépôt des fichiers Excel sur le LMS.</li>
+                            <li>Rangement de la salle.</li>
                         </ul>
                     </div>
-                    <div class="bg-indigo-900 text-white p-6 rounded-xl text-center">
-                        <div class="text-4xl font-bold mb-1">Classe A</div>
-                        <div class="text-indigo-200 text-sm">Priorité absolue en cas de crise</div>
-                    </div>
                 </div>
 
-                <!-- Interactive Chart -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center">
-                    <h3 class="font-bold text-slate-700 mb-4 self-start">Visualisation de la Courbe ABC</h3>
-                    <div class="chart-container">
-                        <canvas id="paretoChart"></canvas>
+            </div>
+        </section>
+
+        <!-- (Autres Sections inchangées : Case, Levers, Intro, Pareto, Matrix, Formulas) -->
+        <!-- SECTION 0: ETUDE DE CAS -->
+        <section id="view-case" class="hidden space-y-8 animate-fade-in">
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-2xl font-bold text-indigo-900 mb-2">Situation : Crash WMS LogistiTech</h2>
+                        <span class="inline-block bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold uppercase tracking-wide">Incident Majeur en Cours</span>
                     </div>
-                    <!-- Visualization & Content Choices: Pareto Chart -> Inform/Teach -> Mixed Chart (Bar + Line) -> Visualizes the cumulative percentage -> Chart.js -->
-                    <p class="text-xs text-slate-400 mt-4 text-center">Le graphique montre comment une petite portion des références (barres bleues) constitue la majorité de la valeur cumulée (ligne rouge).</p>
+                    <div class="text-right text-sm text-slate-500">
+                        <p>Date : Mardi 14 Décembre</p>
+                        <p>Heure : 13h00 (Point de situation)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="alert-box p-6 rounded-r-xl shadow-sm">
+                        <h3 class="font-bold text-red-900 mb-2 flex items-center">Rapport d'Incident</h3>
+                        <p class="text-slate-800">Panne réseau WMS. Durée 3h. 450 Commandes bloquées.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-slate-50 rounded-lg">
+                                <div class="text-sm text-slate-500 mb-1">Impact Client</div>
+                                <div class="text-2xl font-bold text-indigo-900">450 Commandes</div>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-lg">
+                                <div class="text-sm text-slate-500 mb-1">Équipe</div>
+                                <div class="text-2xl font-bold text-indigo-900">20 Préparateurs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-1 space-y-6">
+                     <div class="bg-indigo-900 text-white p-6 rounded-xl shadow-lg">
+                        <h3 class="font-bold text-indigo-100 mb-4 text-sm">Données Financières</h3>
+                        <ul class="space-y-4 text-sm">
+                            <li class="flex justify-between items-center border-b border-indigo-800 pb-2"><span>Coût Horaire</span><span class="font-mono font-bold">19,50 €</span></li>
+                            <li class="flex justify-between items-center border-b border-indigo-800 pb-2"><span>Pénalité VIP</span><span class="font-mono font-bold text-red-300">15,00 €</span></li>
+                            <li class="flex justify-between items-center"><span>Transport Express</span><span class="font-mono font-bold text-amber-300">22,00 €</span></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 3: EISENHOWER -->
+        <!-- SECTION LEVIERS -->
+        <section id="view-levers" class="hidden space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h3 class="font-bold text-slate-800">Les 3 Familles</h3>
+                    <div class="bg-blue-50 p-4 rounded border-l-4 border-blue-500"><h4 class="font-bold text-blue-900">RH</h4><p class="text-sm text-blue-800">Heures sup, Intérim</p></div>
+                    <div class="bg-teal-50 p-4 rounded border-l-4 border-teal-500"><h4 class="font-bold text-teal-900">Technique</h4><p class="text-sm text-teal-800">Matériel, Système</p></div>
+                    <div class="bg-purple-50 p-4 rounded border-l-4 border-purple-500"><h4 class="font-bold text-purple-900">Organisation</h4><p class="text-sm text-purple-800">Process, Priorités</p></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-md">
+                    <h3 class="font-bold text-indigo-900 mb-4">Atelier Interactif</h3>
+                    <div id="action-container" class="flex flex-wrap gap-2 mb-6 min-h-[60px]"></div>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div id="zone-rh" class="drop-zone bg-blue-50 border-2 border-dashed border-blue-200 rounded p-2 h-32"><span>RH</span><div class="items-list mt-1 space-y-1 text-xs"></div></div>
+                        <div id="zone-tech" class="drop-zone bg-teal-50 border-2 border-dashed border-teal-200 rounded p-2 h-32"><span>TECH</span><div class="items-list mt-1 space-y-1 text-xs"></div></div>
+                        <div id="zone-org" class="drop-zone bg-purple-50 border-2 border-dashed border-purple-200 rounded p-2 h-32"><span>ORGA</span><div class="items-list mt-1 space-y-1 text-xs"></div></div>
+                    </div>
+                    <div id="feedback-msg" class="mt-2 text-center text-sm font-bold min-h-[20px]"></div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mt-8">
+                <div class="chart-container"><canvas id="leversChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- SECTION INTRO -->
+        <section id="view-intro" class="hidden space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                    <h2 class="text-2xl font-bold text-indigo-900 mb-4">Supervision (Constat)</h2>
+                    <p class="text-slate-600">Observer, Mesurer, KPI.</p>
+                </div>
+                <div class="bg-indigo-50 p-8 rounded-2xl shadow-md border border-indigo-100">
+                    <h2 class="text-2xl font-bold text-indigo-900 mb-4">Régulation (Action)</h2>
+                    <p class="text-indigo-900">Intervenir, Corriger, Décider.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION PARETO -->
+        <section id="view-pareto" class="hidden space-y-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center">
+                <h2 class="text-2xl font-bold text-indigo-900 mb-2">Loi de Pareto (20/80)</h2>
+                <div class="chart-container"><canvas id="paretoChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- SECTION MATRIX -->
         <section id="view-matrix" class="hidden space-y-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-2xl font-bold text-indigo-900 mb-2">La Matrice d'Eisenhower</h2>
-                <p class="text-slate-600">
-                    Outil d'arbitrage pour le régulateur. Elle permet de trier les tâches selon deux axes : l'<strong>Importance</strong> (Impact sur les objectifs) et l'<strong>Urgence</strong> (Pression temporelle).
-                </p>
-            </div>
-
-            <!-- Matrix Visualization -->
             <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
-                <!-- Headers -->
-                <div class="col-span-2 grid grid-cols-2 text-center font-bold text-slate-500 uppercase text-sm tracking-wider mb-2">
-                    <div>Urgent</div>
-                    <div>Pas Urgent</div>
-                </div>
-
-                <!-- Quadrant 1: DO -->
-                <div class="matrix-cell bg-red-50 border-2 border-red-200 rounded-xl p-6 relative hover:shadow-md">
-                    <div class="absolute top-4 left-4 font-bold text-red-800 text-lg">FAIRE (Important)</div>
-                    <div class="mt-8 space-y-3">
-                        <p class="text-sm text-red-700 font-medium">Crises, Problèmes pressants</p>
-                        <div class="bg-white p-3 rounded border border-red-100 shadow-sm text-xs text-slate-600">
-                            <strong>LogistiTech :</strong><br>Gérer la panne WMS (Arrêt prod)
-                        </div>
-                        <div class="bg-white p-3 rounded border border-red-100 shadow-sm text-xs text-slate-600">
-                            <strong>LogistiTech :</strong><br>Appeler le transporteur Express pour 18h
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quadrant 2: PLAN -->
-                <div class="matrix-cell bg-blue-50 border-2 border-blue-200 rounded-xl p-6 relative hover:shadow-md">
-                    <div class="absolute top-4 left-4 font-bold text-blue-800 text-lg">PLANIFIER (Important)</div>
-                    <div class="mt-8 space-y-3">
-                        <p class="text-sm text-blue-700 font-medium">Prévention, Amélioration</p>
-                        <div class="bg-white p-3 rounded border border-blue-100 shadow-sm text-xs text-slate-600">
-                            <strong>LogistiTech :</strong><br>Réviser le contrat de maintenance WMS
-                        </div>
-                        <div class="bg-white p-3 rounded border border-blue-100 shadow-sm text-xs text-slate-600">
-                            <strong>LogistiTech :</strong><br>Former les équipes aux procédures dégradées
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Row 2 Label (Implicit context via layout) -->
-
-                <!-- Quadrant 3: DELEGATE -->
-                <div class="matrix-cell bg-amber-50 border-2 border-amber-200 rounded-xl p-6 relative hover:shadow-md">
-                    <div class="absolute top-4 left-4 font-bold text-amber-800 text-lg">DÉLÉGUER (Pas Important)</div>
-                    <div class="mt-8 space-y-3">
-                        <p class="text-sm text-amber-700 font-medium">Interruptions, Réunions sans enjeu</p>
-                        <div class="bg-white p-3 rounded border border-amber-100 shadow-sm text-xs text-slate-600">
-                            <strong>LogistiTech :</strong><br>Répondre à un mail d'info générale
-                        </div>
-                        <div class="bg-white p-3 rounded border border-amber-100 shadow-sm text-xs text-slate-600">
-                            <strong>LogistiTech :</strong><br>Nettoyer la zone de pause (Déléguer au prestataire)
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quadrant 4: ELIMINATE -->
-                <div class="matrix-cell bg-slate-100 border-2 border-slate-200 rounded-xl p-6 relative hover:shadow-md">
-                    <div class="absolute top-4 left-4 font-bold text-slate-600 text-lg">ÉLIMINER (Pas Important)</div>
-                    <div class="mt-8 space-y-3">
-                        <p class="text-sm text-slate-500 font-medium">Distractions, Perte de temps</p>
-                        <div class="bg-white p-3 rounded border border-slate-200 shadow-sm text-xs text-slate-400">
-                            <strong>LogistiTech :</strong><br>Rumeurs sur la panne
-                        </div>
-                    </div>
-                </div>
+                <div class="matrix-cell bg-red-50 border-2 border-red-200 rounded-xl p-6"><div class="font-bold text-red-800 text-lg">FAIRE (Urgent/Imp)</div><p class="text-sm mt-4 text-red-700">Crises, Pannes</p></div>
+                <div class="matrix-cell bg-blue-50 border-2 border-blue-200 rounded-xl p-6"><div class="font-bold text-blue-800 text-lg">PLANIFIER (Imp/Pas Urgent)</div><p class="text-sm mt-4 text-blue-700">Prévention</p></div>
+                <div class="matrix-cell bg-amber-50 border-2 border-amber-200 rounded-xl p-6"><div class="font-bold text-amber-800 text-lg">DÉLÉGUER (Urgent/Pas Imp)</div><p class="text-sm mt-4 text-amber-700">Interruptions</p></div>
+                <div class="matrix-cell bg-slate-100 border-2 border-slate-200 rounded-xl p-6"><div class="font-bold text-slate-600 text-lg">ÉLIMINER</div></div>
             </div>
         </section>
 
-        <!-- SECTION 4: FORMULES -->
+        <!-- SECTION FORMULAS -->
         <section id="view-formulas" class="hidden space-y-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                <h2 class="text-2xl font-bold text-indigo-900 mb-2">Formules de Pilotage</h2>
-                <p class="text-slate-600">
-                    Les outils mathématiques indispensables pour passer du "ressenti" à l'analyse factuelle.
-                </p>
-            </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                <!-- Formule 1: Productivité -->
-                <div class="formula-card rounded-2xl p-6 shadow-lg">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-xl font-bold">Productivité Horaire</h3>
-                        <span class="bg-indigo-500 bg-opacity-30 text-xs px-2 py-1 rounded">Performance</span>
-                    </div>
-                    <div class="bg-white bg-opacity-10 rounded p-4 text-center font-mono text-lg mb-4">
-                        Prod = Quantité Produite / (Nb Heures × Nb Personnes)
-                    </div>
-                    <div class="text-indigo-100 text-sm">
-                        <p class="font-semibold mb-1">Exemple LogistiTech :</p>
-                        <p>300 colis préparés en 1h par 20 personnes.</p>
-                        <p>Prod = 300 / (1 × 20) = <strong>15 colis/h/homme</strong></p>
-                    </div>
-                </div>
-
-                <!-- Formule 2: Besoin en Ressources (HH) -->
-                <div class="formula-card rounded-2xl p-6 shadow-lg">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-xl font-bold">Besoin en Heures (Charge)</h3>
-                        <span class="bg-indigo-500 bg-opacity-30 text-xs px-2 py-1 rounded">Planification</span>
-                    </div>
-                    <div class="bg-white bg-opacity-10 rounded p-4 text-center font-mono text-lg mb-4">
-                        Heures Nécessaires = Volume à traiter / Productivité
-                    </div>
-                    <div class="text-indigo-100 text-sm">
-                        <p class="font-semibold mb-1">Exemple LogistiTech :</p>
-                        <p>Retard de 450 colis. Prod moyenne de 15.</p>
-                        <p>Besoin = 450 / 15 = <strong>30 Heures-Hommes</strong></p>
-                    </div>
-                </div>
-
-                <!-- Formule 3: Taux de Service -->
-                <div class="formula-card rounded-2xl p-6 shadow-lg">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-xl font-bold">Taux de Service Client</h3>
-                        <span class="bg-indigo-500 bg-opacity-30 text-xs px-2 py-1 rounded">Qualité</span>
-                    </div>
-                    <div class="bg-white bg-opacity-10 rounded p-4 text-center font-mono text-lg mb-4">
-                        Tx Service = (Commandes Conformes / Commandes Totales) × 100
-                    </div>
-                    <div class="text-indigo-100 text-sm">
-                        <p class="font-semibold mb-1">Impact :</p>
-                        <p>Si 450 commandes sur 2000 sont en retard :</p>
-                        <p>Tx = (1550 / 2000) × 100 = <strong>77,5%</strong> (Critique !)</p>
-                    </div>
-                </div>
-
-                <!-- Formule 4: ROI Action Corrective -->
-                <div class="formula-card rounded-2xl p-6 shadow-lg">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-xl font-bold">Calcul de Rentabilité (Arbitrage)</h3>
-                        <span class="bg-indigo-500 bg-opacity-30 text-xs px-2 py-1 rounded">Décision</span>
-                    </div>
-                    <div class="bg-white bg-opacity-10 rounded p-4 text-center font-mono text-sm mb-4">
-                        Coût Total = Coût Transport + Pénalités + (Heures Sup)
-                    </div>
-                    <div class="text-indigo-100 text-sm">
-                        <p class="font-semibold mb-1">Comparaison :</p>
-                        <p>Option A (Retard) : Transport Std + Pénalités</p>
-                        <p>Option B (Express) : Transport Exp + 0 Pénalité</p>
-                        <p><strong>Choisir le montant le plus bas (ou le meilleur service).</strong></p>
-                    </div>
-                </div>
-
+                <div class="formula-card rounded-2xl p-6 shadow-lg"><h3 class="font-bold mb-4">Productivité</h3><div class="bg-white/10 p-4 rounded text-center font-mono">Qté / (Heures x Pers)</div></div>
+                <div class="formula-card rounded-2xl p-6 shadow-lg"><h3 class="font-bold mb-4">Calcul ROI</h3><div class="bg-white/10 p-4 rounded text-center font-mono">Coût Total = Transp + Pénalités</div></div>
             </div>
         </section>
 
     </main>
 
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
     <script>
-        // --- NAVIGATION LOGIC ---
+        // NAVIGATION
         function switchTab(tabId) {
-            // Hide all views
-            ['intro', 'pareto', 'matrix', 'formulas'].forEach(id => {
+            ['guide', 'case', 'levers', 'intro', 'pareto', 'matrix', 'formulas'].forEach(id => {
                 const el = document.getElementById(`view-${id}`);
                 const btn = document.getElementById(`tab-${id}`);
-                
                 if (id === tabId) {
                     el.classList.remove('hidden');
                     btn.classList.add('active-tab');
                     btn.classList.remove('inactive-tab');
-                    // Resize chart if showing pareto
-                    if (id === 'pareto' && paretoChart) {
-                        setTimeout(() => paretoChart.resize(), 10);
-                    }
+                    if (id === 'pareto' && paretoChart) setTimeout(() => paretoChart.resize(), 10);
+                    if (id === 'levers' && leversChart) setTimeout(() => leversChart.resize(), 10);
                 } else {
                     el.classList.add('hidden');
                     btn.classList.remove('active-tab');
@@ -351,93 +401,67 @@
             });
         }
 
-        // --- PARETO CHART ---
-        let paretoChart;
-
-        window.addEventListener('load', () => {
-            const ctxPareto = document.getElementById('paretoChart').getContext('2d');
-            
-            // Data for ABC Analysis Simulation
-            // Items sorted by value
-            const labels = ['Ref 1', 'Ref 2', 'Ref 3', 'Ref 4', 'Ref 5', 'Ref 6', 'Ref 7', 'Ref 8', 'Ref 9', 'Ref 10'];
-            const values = [40, 25, 15, 8, 5, 3, 2, 1, 0.5, 0.5]; // Percent of total value individually
-            
-            // Calculate Cumulative Percentage
-            let cumulative = 0;
-            const cumulativeData = values.map(val => {
-                cumulative += val;
-                return cumulative;
+        // LEVERS WORKSHOP
+        const actions = [
+            { id: 1, text: "Heures Sup", cat: "rh" }, { id: 2, text: "Express", cat: "tech" },
+            { id: 3, text: "Priorité VIP", cat: "org" }, { id: 4, text: "Intérim", cat: "rh" },
+            { id: 5, text: "Loc Chariot", cat: "tech" }, { id: 6, text: "Mode Papier", cat: "org" }
+        ];
+        let currentAction = null;
+        function initWorkshop() {
+            const c = document.getElementById('action-container'); c.innerHTML = '';
+            actions.forEach(a => {
+                const b = document.createElement('div');
+                b.className = 'lever-item bg-white border border-slate-300 px-3 py-2 rounded shadow-sm text-sm font-medium hover:bg-indigo-50';
+                b.innerText = a.text;
+                b.onclick = () => {
+                    document.querySelectorAll('.lever-item').forEach(x => x.classList.remove('ring-2', 'ring-indigo-500'));
+                    b.classList.add('ring-2', 'ring-indigo-500');
+                    currentAction = { el: b, data: a };
+                    document.getElementById('feedback-msg').innerText = "Choisissez une catégorie...";
+                    document.getElementById('feedback-msg').className = "mt-2 text-center text-sm font-bold text-indigo-600";
+                };
+                c.appendChild(b);
             });
-
-            paretoChart = new Chart(ctxPareto, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: '% Valeur Cumulée (Ligne)',
-                            data: cumulativeData,
-                            borderColor: '#ef4444', // Red line
-                            backgroundColor: 'transparent',
-                            type: 'line',
-                            yAxisID: 'y1',
-                            tension: 0.1,
-                            borderWidth: 2,
-                            pointRadius: 4
-                        },
-                        {
-                            label: '% Valeur Individuelle (Barre)',
-                            data: values,
-                            backgroundColor: (context) => {
-                                // Highlight top 20% (approx first 2-3 items) in distinctive color
-                                return context.dataIndex < 3 ? '#4f46e5' : '#cbd5e1';
-                            },
-                            yAxisID: 'y',
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: '% Individuel' },
-                            max: 50
-                        },
-                        y1: {
-                            beginAtZero: true,
-                            position: 'right',
-                            title: { display: true, text: '% Cumulé' },
-                            max: 100,
-                            grid: { display: false }
-                        }
-                    },
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: {
-                            callbacks: {
-                                footer: (tooltipItems) => {
-                                    const index = tooltipItems[0].dataIndex;
-                                    if(index < 3) return "CLASSE A : Priorité Maximale";
-                                    if(index < 6) return "CLASSE B : Gestion Intermédiaire";
-                                    return "CLASSE C : Gestion Simplifiée";
-                                }
-                            }
-                        }
+        }
+        function setupDropZones() {
+            ['rh', 'tech', 'org'].forEach(z => {
+                document.getElementById(`zone-${z}`).onclick = () => {
+                    if (!currentAction) return;
+                    const msg = document.getElementById('feedback-msg');
+                    if (currentAction.data.cat === z) {
+                        const i = document.createElement('div');
+                        i.className = 'bg-white/60 px-2 py-1 rounded'; i.innerText = currentAction.data.text;
+                        document.querySelector(`#zone-${z} .items-list`).appendChild(i);
+                        currentAction.el.remove(); currentAction = null;
+                        msg.innerText = "Correct !"; msg.className = "mt-2 text-center text-sm font-bold text-green-600";
+                    } else {
+                        msg.innerText = "Erreur !"; msg.className = "mt-2 text-center text-sm font-bold text-red-500";
                     }
-                }
+                };
+            });
+        }
+
+        // CHARTS
+        let paretoChart, leversChart;
+        window.onload = () => {
+            initWorkshop(); setupDropZones();
+            
+            const ctxP = document.getElementById('paretoChart').getContext('2d');
+            paretoChart = new Chart(ctxP, {
+                type: 'bar', data: { labels: ['A1','A2','A3','B1','B2','B3','C1','C2','C3','C4'], datasets: [{type:'line', data:[40,65,80,88,93,96,98,99,99.5,100], borderColor:'#ef4444', yAxisID:'y1'}, {data:[40,25,15,8,5,3,2,1,0.5,0.5], backgroundColor:'#4f46e5', yAxisID:'y'}] },
+                options: {maintainAspectRatio:false, scales:{y1:{position:'right',max:100}}}
             });
 
-            // Fade in effect
-            document.querySelectorAll('.animate-fade-in').forEach(el => {
-                el.style.opacity = 0;
-                el.style.transition = 'opacity 0.6s ease-out';
-                setTimeout(() => el.style.opacity = 1, 100);
+            const ctxL = document.getElementById('leversChart').getContext('2d');
+            leversChart = new Chart(ctxL, {
+                type: 'scatter', data: { datasets: [{label:'RH', data:[{x:8,y:7},{x:9,y:6}], backgroundColor:'#3b82f6'}, {label:'Tech', data:[{x:6,y:5},{x:7,y:8}], backgroundColor:'#14b8a6'}, {label:'Orga', data:[{x:2,y:9},{x:1,y:8}], backgroundColor:'#a855f7'}] },
+                options: {maintainAspectRatio:false, scales:{x:{title:{display:true,text:'Coût'},min:0,max:10},y:{title:{display:true,text:'Impact'},min:0,max:10}}}
             });
-        });
 
+            switchTab('guide');
+            document.querySelectorAll('.animate-fade-in').forEach(el => { el.style.opacity = 0; el.style.transition = 'opacity 0.6s ease-out'; setTimeout(() => el.style.opacity = 1, 100); });
+        };
     </script>
 </body>
 </html>
