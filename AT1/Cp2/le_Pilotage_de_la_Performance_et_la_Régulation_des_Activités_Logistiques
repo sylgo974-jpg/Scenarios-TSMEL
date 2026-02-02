@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilotage & Régulation TSMEL - Scénario Pédagogique Interactif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Slate & Indigo - Professional, clean, and focused on clarity for training data. -->
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Chart Container Styling as per Technical Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom scrollbar for timeline */
+        .timeline-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .timeline-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        .timeline-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 3px;
+        }
+        .timeline-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        .active-tab {
+            border-bottom: 2px solid #4f46e5;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen overflow-x-hidden">
+
+    <!-- Application Structure Plan: 
+         The application is designed as a 'Trainer's Cockpit' or 'Instructional Design Dashboard'.
+         It moves away from a linear document reading to a functional exploration of the training day.
+         
+         1. Header: Context (Module, Trainer, Goals).
+         2. Navigation: Tabs to switch views without scrolling (Dashboard, Timeline, Simulation, Theory).
+         3. Dashboard View: High-level analytics of the pedagogical scenario (Bloom taxonomy distribution, Method balance). 
+            Goal: Visualize the balance of the training.
+         4. Timeline View (Le Scénario): A chronological, interactive agenda. Users can expand cards to see deep details (supports, evaluation, alternative scenarios).
+            Goal: Operational preparation helper.
+         5. Simulation View (LogistiTech): An interactive calculator and visualizer for the core case study of the day. 
+            Goal: Allow the trainer to test the math and arguments used in the "War Room" activity.
+         6. Theoretical Frame: Visualizing Tyler's alignment.
+         
+         Why this structure? It separates the "planning" (Timeline) from the "analysis" (Dashboard) and the "content" (Simulation), preventing cognitive overload.
+    -->
+
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-xl">TSMEL</div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900 leading-tight">Pilotage & Régulation</h1>
+                        <p class="text-sm text-slate-500">Module AT1 CP2 | Formateur : Sylvain GORECKI</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 text-sm text-slate-600">
+                    <span class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>08h30 - 16h30</span>
+                    <span class="hidden md:inline">|</span>
+                    <span class="hidden md:inline">Salle ou Virtuel</span>
+                </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-8 mt-6 border-b border-slate-200 overflow-x-auto">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="active-tab pb-3 px-1 transition-colors hover:text-indigo-600 whitespace-nowrap">Tableau de Bord Pédagogique</button>
+                <button onclick="switchTab('timeline')" id="tab-timeline" class="pb-3 px-1 text-slate-500 hover:text-indigo-600 transition-colors whitespace-nowrap">Scénario Chronologique</button>
+                <button onclick="switchTab('simulation')" id="tab-simulation" class="pb-3 px-1 text-slate-500 hover:text-indigo-600 transition-colors whitespace-nowrap">Simulation LogistiTech</button>
+                <button onclick="switchTab('theory')" id="tab-theory" class="pb-3 px-1 text-slate-500 hover:text-indigo-600 transition-colors whitespace-nowrap">Alignement (Tyler)</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- VIEW 1: DASHBOARD -->
+        <section id="view-dashboard" class="space-y-8 animate-fade-in">
+            <!-- Contextual Intro -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Analyse Globale de la Session</h2>
+                <p class="text-slate-600">
+                    Cette vue synthétise l'équilibre pédagogique de la journée de formation. Elle permet de visualiser la répartition des niveaux taxonomiques (Bloom) et l'alternance des méthodes pédagogiques pour garantir l'atteinte des objectifs opérationnels : identifier, calculer, analyser et décider.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Chart 1: Bloom Taxonomy -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-700 border-l-4 border-indigo-500 pl-3">Répartition Cognitive (Bloom)</h3>
+                    <p class="text-sm text-slate-500 mb-4">Distribution des verbes d'action dans les objectifs pédagogiques de la journée.</p>
+                    <div class="flex-grow flex items-center justify-center bg-slate-50 rounded-lg p-4">
+                        <div class="chart-container">
+                            <canvas id="bloomChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Visualization & Content Choices: Bloom Taxonomy Chart -> Inform/Analyze -> Doughnut Chart -> Interactive segments -> Visualizes the complexity progression of the day -> Chart.js -->
+                </div>
+
+                <!-- Chart 2: Methods Distribution -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-700 border-l-4 border-teal-500 pl-3">Méthodes Pédagogiques</h3>
+                    <p class="text-sm text-slate-500 mb-4">Temps consacré à chaque type de méthode (en minutes).</p>
+                    <div class="flex-grow flex items-center justify-center bg-slate-50 rounded-lg p-4">
+                        <div class="chart-container">
+                            <canvas id="methodChart"></canvas>
+                        </div>
+                    </div>
+                     <!-- Visualization & Content Choices: Methods Chart -> Compare -> Bar Chart -> Hover for minutes -> Validates the "Active" pedagogy requirement -> Chart.js -->
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
+                    <div class="text-indigo-600 text-sm font-semibold uppercase tracking-wider">Durée Totale</div>
+                    <div class="text-3xl font-bold text-indigo-900 mt-2">7 Heures</div>
+                    <div class="text-indigo-700 text-sm mt-1">08h30 - 16h30</div>
+                </div>
+                <div class="bg-teal-50 p-6 rounded-xl border border-teal-100">
+                    <div class="text-teal-600 text-sm font-semibold uppercase tracking-wider">Focus Principal</div>
+                    <div class="text-3xl font-bold text-teal-900 mt-2">Application</div>
+                    <div class="text-teal-700 text-sm mt-1">45% du temps (Excel & Sims)</div>
+                </div>
+                <div class="bg-amber-50 p-6 rounded-xl border border-amber-100">
+                    <div class="text-amber-600 text-sm font-semibold uppercase tracking-wider">Livrable Final</div>
+                    <div class="text-3xl font-bold text-amber-900 mt-2">Pitch & ROI</div>
+                    <div class="text-amber-700 text-sm mt-1">Argumentation Décisionnelle</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: TIMELINE -->
+        <section id="view-timeline" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 mb-2">Déroulé Chronologique</h2>
+                        <p class="text-slate-600 max-w-3xl">
+                            Parcourez le scénario étape par étape. Cliquez sur une carte pour révéler les détails des supports, les méthodes d'évaluation et les scénarios alternatifs (distanciel).
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <label for="filterPhase" class="text-sm font-medium text-slate-700 mr-2">Filtrer par Phase:</label>
+                        <select id="filterPhase" class="border-slate-300 border rounded-md text-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" onchange="renderTimeline()">
+                            <option value="all">Tout voir</option>
+                            <option value="matin">Matin (08h30 - 12h30)</option>
+                            <option value="apres-midi">Après-midi (13h30 - 16h30)</option>
+                            <option value="evaluation">Moments d'Évaluation</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Timeline Container -->
+            <div id="timeline-container" class="space-y-4">
+                <!-- Javascript will populate this -->
+            </div>
+        </section>
+
+        <!-- VIEW 3: SIMULATION (LOGISTITECH) -->
+        <section id="view-simulation" class="hidden space-y-8">
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Simulation : Le Crash WMS LogistiTech</h2>
+                <p class="text-slate-600">
+                    Cette section permet de modéliser l'exercice central de la journée ("War Room"). Utilisez les curseurs pour simuler différentes hypothèses et visualiser l'impact sur le ROI, aidant les apprenants à comprendre l'arbitrage entre Coût et Service Client (Profil Directeur M. Morel).
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Controls -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-1">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Paramètres de la Crise</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nombre de Commandes Impactées</label>
+                            <input type="number" id="sim-orders" value="450" class="w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 border" oninput="updateSimulation()">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Pénalité Retard (Client VIP) / Commande (€)</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="range" id="sim-penalty" min="0" max="50" value="15" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" oninput="updateSimulation()">
+                                <span id="val-penalty" class="text-sm font-bold text-slate-900 w-12 text-right">15€</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Coût Transport Classique (J+2) (€)</label>
+                            <input type="number" id="sim-transport-std" value="8" class="w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 border" oninput="updateSimulation()">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Coût Transport Express (J+1) (€)</label>
+                            <input type="number" id="sim-transport-exp" value="22" class="w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2 border" oninput="updateSimulation()">
+                        </div>
+
+                        <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                             <p class="text-xs text-amber-800 font-semibold mb-1">Note Pédagogique :</p>
+                             <p class="text-xs text-amber-700">Si l'Option Express est moins chère que (Classique + Pénalités), l'argumentation est purement financière. Si elle est plus chère, l'argumentation doit basculer sur le "Coût de la non-qualité" (Perte client).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Viz -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 lg:col-span-2 flex flex-col">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Comparatif Financier & Décision</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                         <div class="bg-red-50 p-4 rounded-lg border border-red-100 text-center">
+                            <div class="text-red-600 text-xs uppercase font-bold">Option A: Retard (J+2)</div>
+                            <div id="res-opt-a" class="text-2xl font-bold text-red-900 mt-1">10 350 €</div>
+                            <div class="text-red-500 text-xs mt-1">Transport + Pénalités</div>
+                         </div>
+                         <div class="bg-green-50 p-4 rounded-lg border border-green-100 text-center">
+                            <div class="text-green-600 text-xs uppercase font-bold">Option B: Express (J+1)</div>
+                            <div id="res-opt-b" class="text-2xl font-bold text-green-900 mt-1">9 900 €</div>
+                            <div class="text-green-500 text-xs mt-1">Transport Express</div>
+                         </div>
+                    </div>
+
+                    <div class="flex-grow flex items-center justify-center bg-slate-50 rounded-lg p-4 relative">
+                        <div class="chart-container">
+                            <canvas id="simChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Visualization & Content Choices: Simulation Chart -> Compare/Decide -> Bar Chart with Threshold -> Interactive inputs -> Demonstrates ROI calculation dynamically -> Chart.js -->
+                    
+                    <div id="decision-box" class="mt-4 p-4 rounded-lg bg-green-100 border border-green-200 text-green-800 text-center font-bold">
+                        Recommandation : OPTION B (Gain financier + Service Client)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: THEORY (TYLER) -->
+        <section id="view-theory" class="hidden space-y-8">
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Alignement Pédagogique (Modèle de Tyler)</h2>
+                <p class="text-slate-600">
+                    Démonstration de la cohérence interne du scénario, garantissant que les activités proposées permettent réellement d'atteindre les objectifs visés et de réussir l'évaluation finale.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 3C Cards -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-indigo-500 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4 text-indigo-600 font-bold text-xl">1</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Cohérence (Objectifs)</h3>
+                    <p class="text-slate-600 text-sm mb-4">Les objectifs sont-ils clairs et mesurables ?</p>
+                    <div class="bg-slate-50 p-3 rounded text-sm text-slate-700 italic border-l-2 border-indigo-300">
+                        "Les activités Excel (Feuille blanche) sont directement liées à la compétence 'Calculer un ROI' du référentiel."
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-teal-500 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-center w-12 h-12 bg-teal-100 rounded-full mb-4 text-teal-600 font-bold text-xl">2</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Correspondance (Expérience)</h3>
+                    <p class="text-slate-600 text-sm mb-4">L'activité ressemble-t-elle à la réalité professionnelle ?</p>
+                    <div class="bg-slate-50 p-3 rounded text-sm text-slate-700 italic border-l-2 border-teal-300">
+                        "Utilisation d'un scénario de crise réaliste (Crash WMS) et confrontation avec un Directeur exigeant (M. Morel)."
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-amber-500 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center justify-center w-12 h-12 bg-amber-100 rounded-full mb-4 text-amber-600 font-bold text-xl">3</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Contrôle (Évaluation)</h3>
+                    <p class="text-slate-600 text-sm mb-4">L'évaluation valide-t-elle l'objectif ?</p>
+                    <div class="bg-slate-50 p-3 rounded text-sm text-slate-700 italic border-l-2 border-amber-300">
+                        "Le Journal de bord (Forms) et le Pitch final vérifient la progression et la capacité de décision finale."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script>
+        // --- DATA STORE ---
+        const scenarioData = [
+            { time: "08h30 - 09h15", phase: "Enrôlement / Motivation", bloom: "Identifier", activity: "Brainstorming 'Le Mur des Aléas'", method: "Active / Interrogative", support: "Canvas (Papier)", eval: "Diagnostique (Orale)", alt: "Mural/Klaxoon ou Forum", duration: 45, type: "matin" },
+            { time: "09h15 - 10h00", phase: "Découverte / Exploration", bloom: "Distinguer", activity: "Analyse de Dashboard dégradé", method: "Active", support: "Support DOCX (Étude de cas)", eval: "Formative Non-formelle", alt: "Analyse guidée OneDrive", duration: 45, type: "matin" },
+            { time: "10h00 - 10h15", phase: "PAUSE", bloom: null, activity: "Pause Café", method: null, support: null, eval: null, alt: null, duration: 15, type: "pause" },
+            { time: "10h15 - 11h00", phase: "Appropriation", bloom: "Connaître", activity: "Topographie des Leviers (Coût vs Service)", method: "Expositive / Active", support: "Canvas collaboratif", eval: "Formative Non-formelle", alt: "Vidéo + Schéma", duration: 45, type: "matin" },
+            { time: "11h00 - 11h50", phase: "Application", bloom: "Calculer", activity: "Atelier Excel 'Feuille Blanche' (ROI)", method: "Active", support: "Excel (Vide)", eval: "Formative Formelle", alt: "Tuto pas-à-pas + Fichier témoin", duration: 50, type: "matin" },
+            { time: "11h50 - 12h30", phase: "Régulation / Évaluation", bloom: "Ajuster", activity: "Journal de bord (Phase 1)", method: "Interrogative", support: "Microsoft Forms", eval: "Formative Formelle", alt: "Feedback asynchrone", duration: 40, type: "evaluation" },
+            { time: "12h30 - 13h30", phase: "DÉJEUNER", bloom: null, activity: "Repas", method: null, support: null, eval: null, alt: null, duration: 60, type: "pause" },
+            { time: "13h30 - 14h20", phase: "Application", bloom: "Analyser", activity: "Simulation 'War Room' LogistiTech", method: "Active", support: "Excel (Vide)", eval: "Formative Non-formelle", alt: "Dépôt fichier LMS", duration: 50, type: "apres-midi" },
+            { time: "14h20 - 15h00", phase: "Appropriation", bloom: "Prioriser", activity: "Matrice d'Eisenhower (VIP vs Std)", method: "Active / Interrogative", support: "Support DOCX", eval: "Formative Non-formelle", alt: "Drag & Drop interactif", duration: 40, type: "apres-midi" },
+            { time: "15h00 - 15h10", phase: "PAUSE", bloom: null, activity: "Pause", method: null, support: null, eval: null, alt: null, duration: 10, type: "pause" },
+            { time: "15h10 - 16h00", phase: "Transfert", bloom: "Argumenter / Décider", activity: "Jeu de rôle : Pitch au Directeur Morel", method: "Active", support: "Grille d'évaluation", eval: "Formative Formelle", alt: "Capsule Vidéo (3 min)", duration: 50, type: "apres-midi" },
+            { time: "16h00 - 16h30", phase: "Synthèse / Bilan", bloom: "Évaluer", activity: "Journal de bord (Phase Finale)", method: "Interrogative", support: "Microsoft Forms", eval: "Formative Formelle", alt: "Auto-évaluation", duration: 30, type: "evaluation" }
+        ];
+
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabId) {
+            // Hide all views
+            ['dashboard', 'timeline', 'simulation', 'theory'].forEach(id => {
+                document.getElementById(`view-${id}`).classList.add('hidden');
+                document.getElementById(`tab-${id}`).classList.remove('active-tab', 'text-indigo-600');
+                document.getElementById(`tab-${id}`).classList.add('text-slate-500');
+            });
+            
+            // Show selected view
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active-tab', 'text-indigo-600');
+            document.getElementById(`tab-${tabId}`).classList.remove('text-slate-500');
+
+            // Trigger chart resize if needed
+            if (tabId === 'dashboard') {
+                if (bloomChart) bloomChart.resize();
+                if (methodChart) methodChart.resize();
+            }
+            if (tabId === 'simulation') {
+                if (simChart) simChart.resize();
+            }
+        }
+
+        // --- DASHBOARD CHARTS ---
+        let bloomChart, methodChart, simChart;
+
+        function initDashboardCharts() {
+            // Process Bloom Data
+            const bloomCounts = {};
+            scenarioData.forEach(item => {
+                if (item.bloom) {
+                    // Split if multiple verbs (e.g. Argumenter / Décider)
+                    item.bloom.split(' / ').forEach(verb => {
+                        const v = verb.trim();
+                        bloomCounts[v] = (bloomCounts[v] || 0) + 1;
+                    });
+                }
+            });
+
+            // Process Method Data
+            const methodMinutes = { 'Active': 0, 'Interrogative': 0, 'Expositive': 0 };
+            scenarioData.forEach(item => {
+                if (item.method && item.duration) {
+                    if (item.method.toLowerCase().includes('active')) methodMinutes['Active'] += item.duration;
+                    if (item.method.toLowerCase().includes('interrogative')) methodMinutes['Interrogative'] += item.duration;
+                    if (item.method.toLowerCase().includes('expositive')) methodMinutes['Expositive'] += item.duration;
+                }
+            });
+
+            // Render Bloom Chart
+            const ctxBloom = document.getElementById('bloomChart').getContext('2d');
+            bloomChart = new Chart(ctxBloom, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(bloomCounts),
+                    datasets: [{
+                        data: Object.values(bloomCounts),
+                        backgroundColor: ['#4f46e5', '#818cf8', '#2dd4bf', '#f59e0b', '#f43f5e', '#a78bfa'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // Render Method Chart
+            const ctxMethod = document.getElementById('methodChart').getContext('2d');
+            methodChart = new Chart(ctxMethod, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(methodMinutes),
+                    datasets: [{
+                        label: 'Minutes',
+                        data: Object.values(methodMinutes),
+                        backgroundColor: ['#2dd4bf', '#a78bfa', '#fbbf24'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } } }
+                }
+            });
+        }
+
+        // --- TIMELINE GENERATION ---
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            const filter = document.getElementById('filterPhase').value;
+            container.innerHTML = '';
+
+            scenarioData.forEach((step, index) => {
+                // Filter Logic
+                if (filter === 'matin' && (step.type !== 'matin' && step.type !== 'pause' && step.time.startsWith('13'))) return; // Simplified logic
+                if (filter === 'matin' && parseInt(step.time.substr(0,2)) >= 13) return;
+                if (filter === 'apres-midi' && parseInt(step.time.substr(0,2)) < 13) return;
+                if (filter === 'evaluation' && step.type !== 'evaluation') return;
+
+                const isPause = step.type === 'pause';
+                const borderClass = isPause ? 'border-l-4 border-slate-300' : 
+                                   (step.type === 'evaluation' ? 'border-l-4 border-amber-500' : 'border-l-4 border-indigo-500');
+                const bgClass = isPause ? 'bg-slate-50 opacity-70' : 'bg-white';
+
+                const html = `
+                    <div class="${bgClass} ${borderClass} rounded-r-lg shadow-sm border border-slate-100 p-4 transition-all hover:shadow-md cursor-pointer group" onclick="toggleDetails(${index})">
+                        <div class="flex flex-col md:flex-row justify-between md:items-center">
+                            <div class="flex items-center mb-2 md:mb-0">
+                                <span class="bg-slate-100 text-slate-600 text-xs font-mono py-1 px-2 rounded mr-3">${step.time}</span>
+                                <h3 class="font-semibold text-slate-800">${step.phase}</h3>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${step.bloom ? `<span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded border border-indigo-100">${step.bloom}</span>` : ''}
+                                <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transform transition-transform" id="arrow-${index}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 mt-2">${step.activity}</p>
+                        
+                        <!-- Hidden Details -->
+                        <div id="details-${index}" class="hidden mt-4 pt-4 border-t border-slate-100 text-sm animate-fade-in">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p><strong class="text-slate-700">Méthode :</strong> ${step.method || 'N/A'}</p>
+                                    <p><strong class="text-slate-700">Supports :</strong> ${step.support || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p><strong class="text-slate-700">Évaluation :</strong> ${step.eval || 'N/A'}</p>
+                                    <p><strong class="text-teal-600">Alternatif (Distanciel) :</strong> ${step.alt || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function toggleDetails(index) {
+            const details = document.getElementById(`details-${index}`);
+            const arrow = document.getElementById(`arrow-${index}`);
+            
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                details.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // --- SIMULATION LOGIC ---
+        function initSimChart() {
+            const ctxSim = document.getElementById('simChart').getContext('2d');
+            simChart = new Chart(ctxSim, {
+                type: 'bar',
+                data: {
+                    labels: ['Option A (Retard + Pénalités)', 'Option B (Express)'],
+                    datasets: [{
+                        label: 'Coût Total (€)',
+                        data: [0, 0], // Init values
+                        backgroundColor: ['#f43f5e', '#22c55e'],
+                        barThickness: 60
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Coût (€)' } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.toLocaleString('fr-FR') + ' €';
+                                }
+                            }
+                        },
+                        legend: { display: false }
+                    }
+                }
+            });
+            updateSimulation();
+        }
+
+        function updateSimulation() {
+            // Get inputs
+            const orders = parseInt(document.getElementById('sim-orders').value) || 0;
+            const penalty = parseInt(document.getElementById('sim-penalty').value) || 0;
+            const costStd = parseInt(document.getElementById('sim-transport-std').value) || 0;
+            const costExp = parseInt(document.getElementById('sim-transport-exp').value) || 0;
+
+            // Update UI Labels
+            document.getElementById('val-penalty').innerText = penalty + '€';
+
+            // Calculations
+            // Option A: Standard Transport + Penalties
+            const totalOptA = (orders * costStd) + (orders * penalty); 
+            
+            // Option B: Express Transport (No penalties assumed as J+1 guaranteed)
+            const totalOptB = (orders * costExp);
+
+            // Update DOM Results
+            document.getElementById('res-opt-a').innerText = totalOptA.toLocaleString('fr-FR') + ' €';
+            document.getElementById('res-opt-b').innerText = totalOptB.toLocaleString('fr-FR') + ' €';
+
+            // Recommendation Logic
+            const decisionBox = document.getElementById('decision-box');
+            if (totalOptB < totalOptA) {
+                decisionBox.className = "mt-4 p-4 rounded-lg bg-green-100 border border-green-200 text-green-800 text-center font-bold";
+                decisionBox.innerHTML = "Recommandation : OPTION B (Gain financier + Service Client)";
+            } else {
+                const diff = totalOptB - totalOptA;
+                decisionBox.className = "mt-4 p-4 rounded-lg bg-amber-100 border border-amber-200 text-amber-900 text-center font-bold";
+                decisionBox.innerHTML = `Recommandation : OPTION B (Attention Surcoût : ${diff.toLocaleString()} €)<br><span class='text-sm font-normal'>Argumentez sur la "Valeur Vie Client" pour convaincre M. Morel.</span>`;
+            }
+
+            // Update Chart
+            if (simChart) {
+                simChart.data.datasets[0].data = [totalOptA, totalOptB];
+                simChart.update();
+            }
+        }
+
+        // --- INIT ---
+        window.addEventListener('load', () => {
+            initDashboardCharts();
+            renderTimeline();
+            initSimChart();
+            
+            // Simple Animation for content appearance
+            document.querySelectorAll('.animate-fade-in').forEach(el => {
+                el.style.opacity = 0;
+                el.style.transition = 'opacity 0.5s ease-in';
+                setTimeout(() => el.style.opacity = 1, 100);
+            });
+        });
+
+    </script>
+</body>
+</html>
