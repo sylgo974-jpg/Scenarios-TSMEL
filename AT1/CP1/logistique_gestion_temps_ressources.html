@@ -6,13 +6,13 @@
     4. 'Méthodes & Calculs': Detailed course content on ETP calculations.
     5. 'Simulateurs & Cas Pratiques': UPDATED SECTION. 
         - Tab 1: Tropik Drive (Classic ETP calc).
-        - Tab 2: LogistiTech (New Crisis Management Case). Interactive step-by-step resolution with financial comparison chart.
+        - Tab 2: LogistiTech (New Static Case Study Module). Integrated user's specific HTML/CSS layout for guided resolution.
     6. 'Synthèse': Comparison table.
     This structure ensures the support acts as a complete training platform. -->
 <!-- Visualization & Content Choices:
-    1. 'LogistiTech Visuals': Use of timeline styling for the scenario context.
-    2. 'Cost Comparison Chart': Vertical Bar Chart to compare Option A, B, and C costs dynamically.
-    3. 'Step-by-Step UI': Accordion or progressive disclosure layout for the case study to guide the learner.
+    1. 'LogistiTech Module': Custom CSS implementation for "Excel-style" tables and "Spoiler" details elements as requested.
+    2. 'Cost Comparison Chart': Removed for LogistiTech (replaced by static calculation details), kept for Tropik Drive.
+    3. 'Step-by-Step UI': Accordion layout for the case study correction.
     CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
 <!DOCTYPE html>
@@ -25,6 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap'); /* For the new module */
         
         body {
             font-family: 'Inter', sans-serif;
@@ -89,24 +90,120 @@
             transform: translateY(-2px);
         }
 
-        /* Step styling for Case Study */
-        .step-circle {
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            transition: all 0.3s ease;
+        /* --- STYLES SPÉCIFIQUES MODULE LOGISTITECH (Intégrés) --- */
+        .log-module {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 100%; /* Adapted for responsive container */
+            margin: 0 auto;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            color: #333;
         }
-        .step-active {
-            background-color: #ea580c;
+        .log-header {
+            background-color: #2c3e50;
             color: white;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            margin: -20px -20px 20px -20px;
+            text-align: center;
         }
-        .step-inactive {
-            background-color: #e5e7eb;
-            color: #9ca3af;
+        .log-h2 {
+            color: #e67e22; /* Orange Logistique */
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        
+        /* BOITES D'INFO */
+        .falc-box {
+            background-color: #fff;
+            border-left: 5px solid #27ae60;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .alert-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        /* TABLEAUX EXCEL STYLE */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9em;
+            background: white;
+        }
+        .excel-table th {
+            background-color: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .excel-table td {
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+        }
+        /* Cellules jaunes (Hypothèses) */
+        .input-cell {
+            background-color: #fff9c4; /* Jaune clair */
+            font-weight: bold;
+            color: #000;
+            text-align: center;
+        }
+        /* Cellules résultats */
+        .result-cell {
+            background-color: #e8f6f3;
+            font-weight: bold;
+            text-align: center;
+        }
+        /* Colonne Formule */
+        .formula-col {
+            font-family: 'Consolas', monospace;
+            color: #c0392b;
+            font-size: 0.85em;
+        }
+
+        /* BOUTONS ACCORDÉON (SPOILER) */
+        details {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        summary {
+            cursor: pointer;
+            padding: 15px;
+            background-color: #ecf0f1;
+            font-weight: bold;
+            list-style: none; /* Cache la flèche par défaut */
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary:after {
+            content: "+"; 
+            float: right; 
+            font-weight: bold;
+        }
+        details[open] summary:after {
+            content: "-";
+        }
+        details[open] summary {
+            background-color: #bdc3c7;
+        }
+        .details-content {
+            padding: 15px;
         }
     </style>
 </head>
@@ -530,122 +627,154 @@
                 </div>
             </div>
 
-            <!-- TAB 2: LogistiTech (New Case Study) -->
-            <div id="sim-logisti" class="hidden space-y-8">
+            <!-- TAB 2: LogistiTech (New Case Study Module - Inserted) -->
+            <div id="sim-logisti" class="hidden">
+                <div class="log-module">
+
+                    <div class="log-header">
+                        <h1>Étude de Cas : Le Crash de LogistiTech</h1>
+                        <p>Niveau : TSMEL / TLE - Gestion de Crise & Coûts</p>
+                    </div>
                 
-                <!-- 1. Context Card -->
-                <div class="bg-white rounded-xl card-shadow overflow-hidden">
-                    <div class="bg-gray-800 text-white p-6 relative">
-                        <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl">📉</div>
-                        <h3 class="text-2xl font-bold mb-2">Étude de Cas : Le Crash de LogistiTech</h3>
-                        <p class="text-gray-300 text-sm">Mardi 14 Décembre - 09h45. Panne Réseau Générale.</p>
+                    <h2 class="log-h2">1. La Mission (Briefing)</h2>
+                    <div class="falc-box">
+                        <h3>🚨 URGENCE 14 DÉCEMBRE</h3>
+                        <p><strong>Le Problème :</strong> Panne informatique de 3 heures ce matin. Tout a été bloqué.</p>
+                        <p><strong>L'Impact :</strong> 450 commandes urgentes sont en retard. Le client attend.</p>
+                        <p><strong>Votre Objectif :</strong> Présenter une solution chiffrée au directeur (M. Morel) pour sauver la situation.</p>
                     </div>
-                    <div class="p-6 grid md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">Le Scénario</h4>
-                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
-                                Le WMS est paralysé pendant <strong>3 heures</strong> (09h45 - 12h45). 450 commandes "Premium" sont bloquées.
-                                Le Directeur, M. Morel, est obsédé par le <strong>NPS (Satisfaction Client)</strong>. Il refuse tout retard mais surveille les coûts.
-                            </p>
-                            <div class="bg-orange-50 p-3 rounded border-l-4 border-orange-500">
-                                <p class="text-orange-900 font-bold text-xs uppercase">Mission TSMEL</p>
-                                <p class="text-orange-800 text-sm">Diagnostiquer l'impact et choisir la solution la moins coûteuse qui sauve la promesse client.</p>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg text-sm space-y-2 border">
-                            <h4 class="font-bold text-gray-800 mb-2">Données Clés</h4>
-                            <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                                <div>👥 Effectif: <span class="font-bold">20</span></div>
-                                <div>📦 Productivité: <span class="font-bold">15 lig/h</span></div>
-                                <div>💶 Coût Horaire: <span class="font-bold">19.50€</span></div>
-                                <div>📈 Majoration HS: <span class="font-bold">25%</span></div>
-                                <div>🚚 Transport Std: <span class="font-bold">8€</span></div>
-                                <div>🚀 Transport Exp: <span class="font-bold">22€</span></div>
-                                <div>⚠️ Pénalité Retard: <span class="font-bold">15€</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. Interactive Resolution Steps -->
-                <div class="grid lg:grid-cols-2 gap-8">
+                
+                    <h2 class="log-h2">2. Les Données (Vos outils)</h2>
+                    <p>Utilisez ces chiffres pour remplir la partie "Hypothèses" de votre fichier Excel.</p>
                     
-                    <!-- Step-by-Step Inputs -->
-                    <div class="bg-white p-6 rounded-xl card-shadow">
-                        <h4 class="font-bold text-lg text-blue-900 mb-6">Résolution Pas-à-Pas</h4>
-                        
-                        <!-- Step 1 -->
-                        <div class="mb-6 relative pl-8 border-l-2 border-gray-200">
-                            <div class="absolute -left-[17px] top-0 step-circle step-active" id="step1-icon">1</div>
-                            <h5 class="font-bold text-gray-800 mb-2">Diagnostic du Volume</h5>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-xs text-gray-500">Commandes Bloquées</label>
-                                    <input type="number" id="lt-cmd" value="450" class="w-full border rounded p-1 text-sm">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Lignes / Commande</label>
-                                    <input type="number" id="lt-lignes" value="2" class="w-full border rounded p-1 text-sm">
-                                </div>
-                            </div>
-                            <p class="text-right text-sm font-bold text-blue-600 mt-2">Total : <span id="lt-res-vol">900</span> lignes</p>
-                        </div>
-
-                        <!-- Step 2 -->
-                        <div class="mb-6 relative pl-8 border-l-2 border-gray-200">
-                            <div class="absolute -left-[17px] top-0 step-circle step-inactive" id="step2-icon">2</div>
-                            <h5 class="font-bold text-gray-800 mb-2">Calcul du Temps de Rattrapage</h5>
-                            <p class="text-xs text-gray-500 mb-2">Capacité de l'équipe (20 pers x 15 lig/h) = 300 lignes/h</p>
-                            <div class="bg-blue-50 p-2 rounded flex justify-between items-center">
-                                <span class="text-sm text-blue-800">Temps nécessaire :</span>
-                                <span class="font-bold text-xl text-blue-900" id="lt-res-time">3.0 Heures</span>
-                            </div>
-                        </div>
-
-                         <!-- Step 3 -->
-                         <div class="relative pl-8 border-l-2 border-transparent">
-                            <div class="absolute -left-[17px] top-0 step-circle step-inactive" id="step3-icon">3</div>
-                            <h5 class="font-bold text-gray-800 mb-2">Arbitrage Financier</h5>
-                            <p class="text-xs text-gray-600 mb-3">Analysez les 3 options dans le graphique ci-contre.</p>
-                            
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="app.selectOption('A')">
-                                    <input type="radio" name="decision" id="opt-A">
-                                    <div class="text-sm">
-                                        <span class="font-bold text-red-700">Option A : Laissez-faire</span>
-                                        <span class="text-xs block text-gray-500">Expédition J+1 (Std) + Pénalités Client</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="app.selectOption('B')">
-                                    <input type="radio" name="decision" id="opt-B">
-                                    <div class="text-sm">
-                                        <span class="font-bold text-orange-600">Option B : Transport Express</span>
-                                        <span class="text-xs block text-gray-500">Expédition J+1 (Express) pour rattraper le délai</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="app.selectOption('C')">
-                                    <input type="radio" name="decision" id="opt-C">
-                                    <div class="text-sm">
-                                        <span class="font-bold text-green-700">Option C : Heures Supplémentaires</span>
-                                        <span class="text-xs block text-gray-500">Rattrapage le soir même + Expédition J+0 (Std)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <table class="excel-table">
+                        <thead>
+                            <tr>
+                                <th>Donnée</th>
+                                <th>Valeur</th>
+                                <th>Unité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Équipe présente</td>
+                                <td class="input-cell">20</td>
+                                <td>Personnes</td>
+                            </tr>
+                            <tr>
+                                <td>Productivité (Cadence)</td>
+                                <td class="input-cell">15</td>
+                                <td>Lignes / heure</td>
+                            </tr>
+                            <tr>
+                                <td>Volume en retard</td>
+                                <td class="input-cell">450</td>
+                                <td>Commandes</td>
+                            </tr>
+                            <tr>
+                                <td>Taille commande moy.</td>
+                                <td class="input-cell">2</td>
+                                <td>Lignes / cde</td>
+                            </tr>
+                            <tr>
+                                <td>Coût Transport Classique</td>
+                                <td class="input-cell">8,00 €</td>
+                                <td>par colis</td>
+                            </tr>
+                            <tr>
+                                <td>Pénalité Retard</td>
+                                <td class="input-cell">15,00 €</td>
+                                <td>par jour</td>
+                            </tr>
+                            <tr>
+                                <td>Coût Transport Express</td>
+                                <td class="input-cell">22,00 €</td>
+                                <td>par colis</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                
+                    <br>
+                    <div class="alert-box">
+                        💡 <strong>Conseil du formateur :</strong> Commencez par calculer le volume total de lignes (450 x 2) avant de calculer le temps de travail.
                     </div>
-
-                    <!-- Visual Feedback -->
-                    <div class="flex flex-col h-full">
-                        <div class="bg-white p-6 rounded-xl card-shadow flex-grow flex flex-col">
-                            <h4 class="font-bold text-lg text-gray-800 mb-4 text-center">Comparatif des Coûts Totaux (€)</h4>
-                            <div class="chart-container flex-grow">
-                                <canvas id="logistiChart"></canvas>
-                            </div>
-                            <div id="decision-feedback" class="mt-4 p-4 rounded-lg text-sm hidden">
-                                <!-- Feedback injected here -->
-                            </div>
+                
+                    <h2 class="log-h2">3. Le Corrigé Type (Cliquez pour ouvrir)</h2>
+                    
+                    <details>
+                        <summary>ÉTAPE 1 : Modélisation du Planning (Temps)</summary>
+                        <div class="details-content">
+                            <table class="excel-table">
+                                <thead>
+                                    <tr>
+                                        <th>Libellé</th>
+                                        <th>Calcul (Formule)</th>
+                                        <th>Résultat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Volume Total (Lignes)</td>
+                                        <td class="formula-col">=Cdes * Lignes (ex: 450*2)</td>
+                                        <td class="result-cell">900</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Capacité de l'équipe / heure</td>
+                                        <td class="formula-col">=Nb Prép * Prod (ex: 20*15)</td>
+                                        <td class="result-cell">300</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Temps de travail nécessaire</strong></td>
+                                        <td class="formula-col">=Volume / Capacité</td>
+                                        <td class="result-cell">3,00 Heures</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><em>Conclusion : Avec 3h de travail, si on reprend à 12h45, on finit à 15h45. Pas besoin d'heures supplémentaires !</em></p>
                         </div>
-                    </div>
+                    </details>
+                
+                    <details>
+                        <summary>ÉTAPE 2 : Comparatif Financier (Coûts)</summary>
+                        <div class="details-content">
+                            <table class="excel-table">
+                                <thead>
+                                    <tr>
+                                        <th>Option</th>
+                                        <th>Détail du calcul</th>
+                                        <th>Coût Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>OPTION A (Classique)</strong></td>
+                                        <td class="formula-col">(450*8€) + (450*15€ pénalité)</td>
+                                        <td class="result-cell" style="color:red;">10 350 €</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>OPTION B (Express)</strong></td>
+                                        <td class="formula-col">(450*22€) + 0€ pénalité</td>
+                                        <td class="result-cell" style="color:green;">9 900 €</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br>
+                            <p><strong>GAIN RÉALISÉ : 450 €</strong> en choisissant l'Express.</p>
+                        </div>
+                    </details>
+                
+                    <details>
+                        <summary>ÉTAPE 3 : Le Point Mort (Expert)</summary>
+                        <div class="details-content">
+                            <p>À quel prix l'Express devient-il trop cher ?</p>
+                            <p><strong>Formule :</strong> Coût Classique + Pénalité = 8€ + 15€</p>
+                            <div class="alert-box" style="text-align:center; font-size:1.2em;">
+                                <strong>SEUIL CRITIQUE : 23,00 €</strong>
+                            </div>
+                            <p>Tant que l'Express coûte moins de 23€, il est rentable financièrement (et stratégiquement pour le client).</p>
+                        </div>
+                    </details>
+                
                 </div>
             </div>
         </section>
@@ -726,16 +855,6 @@
                 expedition: { vol: 200, tu: 6 },
                 incidentActive: false
             },
-            logistiData: {
-                cmd: 450,
-                lignes: 2,
-                coutH: 19.5,
-                coutTrspStd: 8,
-                coutTrspExp: 22,
-                penalite: 15,
-                majoration: 1.25,
-                team: 20
-            },
             navItems: [
                 { id: 'home', label: '🏠 Accueil' },
                 { id: 'warehouse', label: '🏭 Entrepôt (Sédentaire)' },
@@ -751,9 +870,7 @@
                 this.navigate('home');
                 this.setupListeners();
                 this.initChart();
-                this.initLogistiChart();
                 this.calculateETP(); // Initial calc for Tropik
-                this.calcLogisti(); // Initial calc for Logisti
             },
 
             renderNav: function() {
@@ -800,7 +917,6 @@
                     document.getElementById('sim-logisti').classList.remove('hidden');
                     document.getElementById('btn-tropik').className = "px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-blue-900 transition-all";
                     document.getElementById('btn-logisti').className = "px-4 py-2 rounded-md text-sm font-bold bg-blue-100 text-blue-900 shadow-sm transition-all flex items-center gap-2";
-                    this.logistiChartInstance.resize(); // Fix chart sizing on reveal
                 }
             },
 
@@ -832,12 +948,6 @@
                         this.calculateETP();
                     });
                 }
-
-                // LogistiTech Inputs
-                ['lt-cmd', 'lt-lignes'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if(el) el.addEventListener('input', () => this.calcLogisti());
-                });
             },
 
             updateData: function() {
@@ -888,61 +998,8 @@
                 this.updateChart(totalHours, existingETP * 35, incidentHours);
             },
 
-            // --- LogistiTech Logic ---
-            calcLogisti: function() {
-                const cmd = parseFloat(document.getElementById('lt-cmd').value) || 0;
-                const lignes = parseFloat(document.getElementById('lt-lignes').value) || 0;
-                const totalLignes = cmd * lignes;
-                
-                // 20 pers * 15 lignes/h = 300 lignes/h capacity
-                const capacityPerHour = 20 * 15;
-                const timeNeeded = totalLignes / capacityPerHour;
-
-                document.getElementById('lt-res-vol').innerText = totalLignes;
-                document.getElementById('lt-res-time').innerText = timeNeeded.toFixed(1) + " Heures";
-
-                // Step visual update
-                if(totalLignes > 0) {
-                    document.getElementById('step2-icon').classList.remove('step-inactive');
-                    document.getElementById('step2-icon').classList.add('step-active');
-                    document.getElementById('step3-icon').classList.remove('step-inactive');
-                    document.getElementById('step3-icon').classList.add('step-active');
-                }
-
-                // Cost Calculations
-                // Opt A: Standard Transp + Penalties
-                const costA = (cmd * this.logistiData.coutTrspStd) + (cmd * this.logistiData.penalite);
-                
-                // Opt B: Express Transp
-                const costB = (cmd * this.logistiData.coutTrspExp);
-
-                // Opt C: Overtime + Standard Transp
-                // HS Cost = Time * Team * CostH * Majoration
-                const hsCost = timeNeeded * this.logistiData.team * this.logistiData.coutH * this.logistiData.majoration;
-                const costC = hsCost + (cmd * this.logistiData.coutTrspStd);
-
-                this.updateLogistiChart(costA, costB, costC);
-            },
-
-            selectOption: function(opt) {
-                const feedbackEl = document.getElementById('decision-feedback');
-                feedbackEl.classList.remove('hidden');
-                
-                if (opt === 'C') {
-                    feedbackEl.className = "mt-4 p-4 rounded-lg text-sm bg-green-100 border border-green-300 text-green-900";
-                    feedbackEl.innerHTML = "<strong>✅ Excellente décision !</strong><br>Les Heures Supplémentaires (~5 000€) sont bien moins chères que le Transport Express (~10 000€) ou les pénalités (~10 300€).<br>De plus, vous sauvez le NPS en livrant J+1 (standard départ le soir même). M. Morel validera.";
-                } else if (opt === 'B') {
-                    feedbackEl.className = "mt-4 p-4 rounded-lg text-sm bg-yellow-100 border border-yellow-300 text-yellow-900";
-                    feedbackEl.innerHTML = "<strong>⚠️ Choix Acceptable mais Coûteux.</strong><br>Le Transport Express (~10 000€) sauve le client (NPS OK), mais coûte le double des Heures Supplémentaires. M. Morel appréciera la qualité, mais critiquera la gestion financière.";
-                } else {
-                    feedbackEl.className = "mt-4 p-4 rounded-lg text-sm bg-red-100 border border-red-300 text-red-900";
-                    feedbackEl.innerHTML = "<strong>❌ Mauvaise décision.</strong><br>C'est l'option la plus chère (~10 300€ avec pénalités) et la pire pour le client (Livraison J+2). Le NPS va s'effondrer.";
-                }
-            },
-
             // --- Chart.js Instances ---
             chartInstance: null,
-            logistiChartInstance: null,
 
             initChart: function() {
                 const ctx = document.getElementById('etpChart');
@@ -966,38 +1023,6 @@
                 this.chartInstance.data.datasets[0].data = [baseNeeded, totalAvailable];
                 this.chartInstance.data.datasets[1].data = [incidentHours, 0];
                 this.chartInstance.update();
-            },
-
-            initLogistiChart: function() {
-                const ctx = document.getElementById('logistiChart');
-                if(!ctx) return;
-                this.logistiChartInstance = new Chart(ctx.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['Option A (Echec)', 'Option B (Express)', 'Option C (H. Sup)'],
-                        datasets: [{
-                            label: 'Coût Total (€)',
-                            data: [0, 0, 0],
-                            backgroundColor: ['#ef4444', '#f97316', '#22c55e'],
-                            borderRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { callbacks: { label: (c) => c.raw.toLocaleString('fr-FR', {style:'currency', currency:'EUR'}) } }
-                        },
-                        scales: { y: { beginAtZero: true } }
-                    }
-                });
-            },
-
-            updateLogistiChart: function(a, b, c) {
-                if(!this.logistiChartInstance) return;
-                this.logistiChartInstance.data.datasets[0].data = [a, b, c];
-                this.logistiChartInstance.update();
             }
         };
 
