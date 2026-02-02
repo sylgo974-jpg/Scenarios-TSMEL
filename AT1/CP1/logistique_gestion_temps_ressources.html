@@ -1,16 +1,18 @@
 <!-- Chosen Palette: Logistic Serenity (Navy Blue, Safety Orange accents, Warm Neutral Background) -->
 <!-- Application Structure Plan: The application is designed as a digital interactive learning module for TSMEL learners.
-    1. 'Accueil': Context setting (Performance vs Legality).
-    2. 'Logistique Sédentaire (Entrepôt)': Focus on the 6h rule and definitions via interactive cards. Covers Q1, Q2, Q7.
-    3. 'Transport Routier': Dashboard-style presentation of RSE limits. Explicitly defines RSE (Q4) and covers Q3, Q5, Q6. Includes Tachograph symbols (Bed/Lit added).
-    4. 'Méthodes & Calculs': NEW SECTION. Detailed course content on ETP calculations and Engagement Coefficient theory.
-    5. 'Simulateur Tropik Drive': Practical application.
-    6. 'Synthèse': Comparison table only (Quiz removed).
-    This structure ensures the support acts as a knowledge base for the external questionnaire. -->
+    1. 'Accueil': Context setting.
+    2. 'Logistique Sédentaire': Focus on the 6h rule and definitions.
+    3. 'Transport Routier': Dashboard-style presentation of RSE limits.
+    4. 'Méthodes & Calculs': Detailed course content on ETP calculations.
+    5. 'Simulateurs & Cas Pratiques': UPDATED SECTION. 
+        - Tab 1: Tropik Drive (Classic ETP calc).
+        - Tab 2: LogistiTech (New Crisis Management Case). Interactive step-by-step resolution with financial comparison chart.
+    6. 'Synthèse': Comparison table.
+    This structure ensures the support acts as a complete training platform. -->
 <!-- Visualization & Content Choices:
-    1. 'Dashboard RSE' (Transport): Visual gauges for limits.
-    2. 'Method Cards': Clear formulas formatted for readability. Traffic light system for Engagement Coefficient interpretation.
-    3. 'Simulateur ETP': Interactive Bar Chart (Chart.js).
+    1. 'LogistiTech Visuals': Use of timeline styling for the scenario context.
+    2. 'Cost Comparison Chart': Vertical Bar Chart to compare Option A, B, and C costs dynamically.
+    3. 'Step-by-Step UI': Accordion or progressive disclosure layout for the case study to guide the learner.
     CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
 <!DOCTYPE html>
@@ -30,7 +32,7 @@
             color: #1f2937;
         }
 
-        /* Custom Scrollbar for clean look */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -86,6 +88,26 @@
         .card-shadow:hover {
             transform: translateY(-2px);
         }
+
+        /* Step styling for Case Study */
+        .step-circle {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .step-active {
+            background-color: #ea580c;
+            color: white;
+        }
+        .step-inactive {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -137,7 +159,7 @@
                             <li>Distinguer les cadres réglementaires (Sédentaire vs Roulant).</li>
                             <li>Comprendre le calcul des ETP et du Coefficient d'Engagement.</li>
                             <li>Analyser l'adéquation charge/capacité (Cas Tropik Drive).</li>
-                            <li>Planifier les ressources sous contrainte.</li>
+                            <li>Planifier les ressources sous contrainte (Cas LogistiTech).</li>
                         </ul>
                     </div>
                     <div class="bg-blue-50 rounded-lg p-6 flex flex-col justify-center items-center text-center">
@@ -298,7 +320,7 @@
                             <p class="text-sm text-gray-600">Attente au quai, vigilance sans tâche active. <strong>Ce n'est pas de la conduite.</strong></p>
                         </div>
 
-                        <!-- Added Repos/Pause Block -->
+                        <!-- Repos/Pause Block -->
                         <div class="p-4 border border-green-200 bg-green-50 rounded-lg">
                             <h4 class="font-bold text-green-900">Repos & Pauses (Lit)</h4>
                             <p class="text-sm text-green-800">Coupures et repos (libre de tout service).</p>
@@ -400,15 +422,25 @@
             </div>
         </section>
 
-        <!-- View: Simulator (Tropik Drive) -->
+        <!-- View: Simulator & Case Studies (UPDATED) -->
         <section id="view-simulator" class="hidden animate-fade-in">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-blue-900">Simulateur & Cas "Tropik Drive"</h2>
-                <p class="text-gray-600 mt-2">Mise en application. Analysez l'adéquation charge/capacité (Coefficient d'Engagement) en temps réel.</p>
+            <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900">Simulateurs & Cas Pratiques</h2>
+                    <p class="text-gray-600 mt-2">Mise en application concrète.</p>
+                </div>
+                <!-- Sub-nav for Cases -->
+                <div class="bg-white rounded-lg p-1 border inline-flex">
+                    <button onclick="app.switchSim('tropik')" id="btn-tropik" class="px-4 py-2 rounded-md text-sm font-bold bg-blue-100 text-blue-900 shadow-sm transition-all">Tropik Drive (ETP)</button>
+                    <button onclick="app.switchSim('logisti')" id="btn-logisti" class="px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-blue-900 transition-all flex items-center gap-2">
+                        <span>🚨 Le Crash LogistiTech</span>
+                        <span class="bg-orange-500 text-white text-[10px] px-1 rounded">Nouveau</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8">
-                
+            <!-- TAB 1: Tropik Drive (Existing) -->
+            <div id="sim-tropik" class="grid lg:grid-cols-3 gap-8">
                 <!-- Inputs Column -->
                 <div class="bg-white p-6 rounded-xl card-shadow lg:col-span-1">
                     <h3 class="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Données Opérationnelles</h3>
@@ -471,7 +503,7 @@
                     <!-- Results Summary -->
                     <div class="grid grid-cols-3 gap-4 mt-6 pt-4 border-t">
                         <div class="text-center">
-                            <p class="text-xs text-gray-500 uppercase">Heures Requises (Allouées)</p>
+                            <p class="text-xs text-gray-500 uppercase">Heures Requises</p>
                             <p id="res-hours" class="text-2xl font-bold text-blue-600">144.0 H</p>
                         </div>
                         <div class="text-center">
@@ -494,6 +526,125 @@
                     <div id="analysis-text" class="mt-4 bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
                         <p class="text-yellow-800 font-bold text-sm">Diagnostic : Surcapacité Structurelle</p>
                         <p class="text-yellow-700 text-xs">Avec 4.11 ETP requis pour 12 présents, le coefficient d'engagement est de 34%. Attention au coût ! Vérifiez vos standards (5 min/colis est lent).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: LogistiTech (New Case Study) -->
+            <div id="sim-logisti" class="hidden space-y-8">
+                
+                <!-- 1. Context Card -->
+                <div class="bg-white rounded-xl card-shadow overflow-hidden">
+                    <div class="bg-gray-800 text-white p-6 relative">
+                        <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl">📉</div>
+                        <h3 class="text-2xl font-bold mb-2">Étude de Cas : Le Crash de LogistiTech</h3>
+                        <p class="text-gray-300 text-sm">Mardi 14 Décembre - 09h45. Panne Réseau Générale.</p>
+                    </div>
+                    <div class="p-6 grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">Le Scénario</h4>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                                Le WMS est paralysé pendant <strong>3 heures</strong> (09h45 - 12h45). 450 commandes "Premium" sont bloquées.
+                                Le Directeur, M. Morel, est obsédé par le <strong>NPS (Satisfaction Client)</strong>. Il refuse tout retard mais surveille les coûts.
+                            </p>
+                            <div class="bg-orange-50 p-3 rounded border-l-4 border-orange-500">
+                                <p class="text-orange-900 font-bold text-xs uppercase">Mission TSMEL</p>
+                                <p class="text-orange-800 text-sm">Diagnostiquer l'impact et choisir la solution la moins coûteuse qui sauve la promesse client.</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm space-y-2 border">
+                            <h4 class="font-bold text-gray-800 mb-2">Données Clés</h4>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                                <div>👥 Effectif: <span class="font-bold">20</span></div>
+                                <div>📦 Productivité: <span class="font-bold">15 lig/h</span></div>
+                                <div>💶 Coût Horaire: <span class="font-bold">19.50€</span></div>
+                                <div>📈 Majoration HS: <span class="font-bold">25%</span></div>
+                                <div>🚚 Transport Std: <span class="font-bold">8€</span></div>
+                                <div>🚀 Transport Exp: <span class="font-bold">22€</span></div>
+                                <div>⚠️ Pénalité Retard: <span class="font-bold">15€</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Interactive Resolution Steps -->
+                <div class="grid lg:grid-cols-2 gap-8">
+                    
+                    <!-- Step-by-Step Inputs -->
+                    <div class="bg-white p-6 rounded-xl card-shadow">
+                        <h4 class="font-bold text-lg text-blue-900 mb-6">Résolution Pas-à-Pas</h4>
+                        
+                        <!-- Step 1 -->
+                        <div class="mb-6 relative pl-8 border-l-2 border-gray-200">
+                            <div class="absolute -left-[17px] top-0 step-circle step-active" id="step1-icon">1</div>
+                            <h5 class="font-bold text-gray-800 mb-2">Diagnostic du Volume</h5>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs text-gray-500">Commandes Bloquées</label>
+                                    <input type="number" id="lt-cmd" value="450" class="w-full border rounded p-1 text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Lignes / Commande</label>
+                                    <input type="number" id="lt-lignes" value="2" class="w-full border rounded p-1 text-sm">
+                                </div>
+                            </div>
+                            <p class="text-right text-sm font-bold text-blue-600 mt-2">Total : <span id="lt-res-vol">900</span> lignes</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="mb-6 relative pl-8 border-l-2 border-gray-200">
+                            <div class="absolute -left-[17px] top-0 step-circle step-inactive" id="step2-icon">2</div>
+                            <h5 class="font-bold text-gray-800 mb-2">Calcul du Temps de Rattrapage</h5>
+                            <p class="text-xs text-gray-500 mb-2">Capacité de l'équipe (20 pers x 15 lig/h) = 300 lignes/h</p>
+                            <div class="bg-blue-50 p-2 rounded flex justify-between items-center">
+                                <span class="text-sm text-blue-800">Temps nécessaire :</span>
+                                <span class="font-bold text-xl text-blue-900" id="lt-res-time">3.0 Heures</span>
+                            </div>
+                        </div>
+
+                         <!-- Step 3 -->
+                         <div class="relative pl-8 border-l-2 border-transparent">
+                            <div class="absolute -left-[17px] top-0 step-circle step-inactive" id="step3-icon">3</div>
+                            <h5 class="font-bold text-gray-800 mb-2">Arbitrage Financier</h5>
+                            <p class="text-xs text-gray-600 mb-3">Analysez les 3 options dans le graphique ci-contre.</p>
+                            
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="app.selectOption('A')">
+                                    <input type="radio" name="decision" id="opt-A">
+                                    <div class="text-sm">
+                                        <span class="font-bold text-red-700">Option A : Laissez-faire</span>
+                                        <span class="text-xs block text-gray-500">Expédition J+1 (Std) + Pénalités Client</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="app.selectOption('B')">
+                                    <input type="radio" name="decision" id="opt-B">
+                                    <div class="text-sm">
+                                        <span class="font-bold text-orange-600">Option B : Transport Express</span>
+                                        <span class="text-xs block text-gray-500">Expédition J+1 (Express) pour rattraper le délai</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer" onclick="app.selectOption('C')">
+                                    <input type="radio" name="decision" id="opt-C">
+                                    <div class="text-sm">
+                                        <span class="font-bold text-green-700">Option C : Heures Supplémentaires</span>
+                                        <span class="text-xs block text-gray-500">Rattrapage le soir même + Expédition J+0 (Std)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Feedback -->
+                    <div class="flex flex-col h-full">
+                        <div class="bg-white p-6 rounded-xl card-shadow flex-grow flex flex-col">
+                            <h4 class="font-bold text-lg text-gray-800 mb-4 text-center">Comparatif des Coûts Totaux (€)</h4>
+                            <div class="chart-container flex-grow">
+                                <canvas id="logistiChart"></canvas>
+                            </div>
+                            <div id="decision-feedback" class="mt-4 p-4 rounded-lg text-sm hidden">
+                                <!-- Feedback injected here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -575,12 +726,22 @@
                 expedition: { vol: 200, tu: 6 },
                 incidentActive: false
             },
+            logistiData: {
+                cmd: 450,
+                lignes: 2,
+                coutH: 19.5,
+                coutTrspStd: 8,
+                coutTrspExp: 22,
+                penalite: 15,
+                majoration: 1.25,
+                team: 20
+            },
             navItems: [
                 { id: 'home', label: '🏠 Accueil' },
                 { id: 'warehouse', label: '🏭 Entrepôt (Sédentaire)' },
                 { id: 'transport', label: '🚛 Transport (Roulant)' },
                 { id: 'methods', label: '📐 Méthodes & Calculs' },
-                { id: 'simulator', label: '🧮 Simulateur Tropik' },
+                { id: 'simulator', label: '🧮 Simulateurs & Cas' },
                 { id: 'synthesis', label: '📋 Synthèse' }
             ],
             
@@ -590,7 +751,9 @@
                 this.navigate('home');
                 this.setupListeners();
                 this.initChart();
-                this.calculateETP(); // Initial calc
+                this.initLogistiChart();
+                this.calculateETP(); // Initial calc for Tropik
+                this.calcLogisti(); // Initial calc for Logisti
             },
 
             renderNav: function() {
@@ -607,14 +770,9 @@
             },
 
             navigate: function(viewId) {
-                // Hide all views
-                document.querySelectorAll('section[id^="view-"]').forEach(el => {
-                    el.classList.add('hidden');
-                });
-                // Show target view
+                document.querySelectorAll('section[id^="view-"]').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`view-${viewId}`).classList.remove('hidden');
                 
-                // Update Nav Styles
                 this.navItems.forEach(item => {
                     const btn = document.getElementById(`nav-${item.id}`);
                     if(item.id === viewId) {
@@ -630,21 +788,35 @@
                 window.scrollTo(0,0);
             },
 
-            // --- Calculator & Interaction Logic ---
+            // --- Simulator Switching Logic ---
+            switchSim: function(simId) {
+                if(simId === 'tropik') {
+                    document.getElementById('sim-tropik').classList.remove('hidden');
+                    document.getElementById('sim-logisti').classList.add('hidden');
+                    document.getElementById('btn-tropik').className = "px-4 py-2 rounded-md text-sm font-bold bg-blue-100 text-blue-900 shadow-sm transition-all";
+                    document.getElementById('btn-logisti').className = "px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-blue-900 transition-all flex items-center gap-2";
+                } else {
+                    document.getElementById('sim-tropik').classList.add('hidden');
+                    document.getElementById('sim-logisti').classList.remove('hidden');
+                    document.getElementById('btn-tropik').className = "px-4 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-blue-900 transition-all";
+                    document.getElementById('btn-logisti').className = "px-4 py-2 rounded-md text-sm font-bold bg-blue-100 text-blue-900 shadow-sm transition-all flex items-center gap-2";
+                    this.logistiChartInstance.resize(); // Fix chart sizing on reveal
+                }
+            },
+
+            // --- Tropik Drive Logic ---
             setupListeners: function() {
-                // Input listeners
+                // Tropik Inputs
                 ['input-vol-rec', 'input-tu-rec', 'input-vol-prep', 'input-tu-prep', 'input-vol-exp', 'input-tu-exp'].forEach(id => {
                     const el = document.getElementById(id);
                     if(el) el.addEventListener('input', () => this.updateData());
                 });
 
-                // Toggle Incident
+                // Incident Toggle
                 const toggle = document.getElementById('toggle-incident');
                 if(toggle) {
                     toggle.addEventListener('click', () => {
                         this.data.incidentActive = !this.data.incidentActive;
-                        
-                        // Visual Toggle UI
                         const knob = toggle.querySelector('span');
                         if(this.data.incidentActive) {
                             toggle.classList.remove('bg-gray-200');
@@ -660,147 +832,176 @@
                         this.calculateETP();
                     });
                 }
+
+                // LogistiTech Inputs
+                ['lt-cmd', 'lt-lignes'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.addEventListener('input', () => this.calcLogisti());
+                });
             },
 
             updateData: function() {
                 this.data.reception.vol = parseFloat(document.getElementById('input-vol-rec').value) || 0;
                 this.data.reception.tu = parseFloat(document.getElementById('input-tu-rec').value) || 0;
-                
                 this.data.prep.vol = parseFloat(document.getElementById('input-vol-prep').value) || 0;
                 this.data.prep.tu = parseFloat(document.getElementById('input-tu-prep').value) || 0;
-                
                 this.data.expedition.vol = parseFloat(document.getElementById('input-vol-exp').value) || 0;
                 this.data.expedition.tu = parseFloat(document.getElementById('input-tu-exp').value) || 0;
-
                 this.calculateETP();
             },
 
             calculateETP: function() {
-                // Calculate Minutes
                 const recMins = this.data.reception.vol * this.data.reception.tu;
                 const prepMins = this.data.prep.vol * this.data.prep.tu;
                 const expMins = this.data.expedition.vol * this.data.expedition.tu;
-
-                // Convert to Hours
                 let totalHours = (recMins + prepMins + expMins) / 60;
                 
-                // Add Incident Hours if active (8h Rec + 4h Exp)
                 let incidentHours = 0;
                 if(this.data.incidentActive) {
                     incidentHours = 12; 
                     totalHours += incidentHours;
                 }
 
-                const etpRequired = totalHours / 35; // Base 35h
+                const etpRequired = totalHours / 35;
                 const existingETP = 12;
 
-                // Update UI Text
                 const resHours = document.getElementById('res-hours');
                 const resEtp = document.getElementById('res-etp');
-                
                 if(resHours) resHours.innerText = totalHours.toFixed(1) + " H";
                 if(resEtp) resEtp.innerText = etpRequired.toFixed(2);
                 
-                // Update Analysis Text
                 const analysisEl = document.getElementById('analysis-text');
                 if(analysisEl) {
                     const occupation = (etpRequired / existingETP) * 100;
-                    
                     if (occupation > 110) {
-                        analysisEl.innerHTML = `<p class="text-red-800 font-bold text-sm">Diagnostic : Sous-capacité Critique (${occupation.toFixed(0)}%)</p><p class="text-red-700 text-xs">Risque de retard livraison et accidents. Recrutement intérim nécessaire.</p>`;
+                        analysisEl.innerHTML = `<p class="text-red-800 font-bold text-sm">Diagnostic : Sous-capacité Critique (${occupation.toFixed(0)}%)</p><p class="text-red-700 text-xs">Risque de retard livraison.</p>`;
                         analysisEl.className = "mt-4 bg-red-50 border border-red-200 p-3 rounded-lg";
                     } else if (occupation < 50) {
-                        analysisEl.innerHTML = `<p class="text-yellow-800 font-bold text-sm">Diagnostic : Surcapacité Structurelle (${occupation.toFixed(0)}%)</p><p class="text-yellow-700 text-xs">Coefficient d'engagement de ${occupation.toFixed(0)}%. Gaspillage financier. Standards à revoir.</p>`;
+                        analysisEl.innerHTML = `<p class="text-yellow-800 font-bold text-sm">Diagnostic : Surcapacité Structurelle (${occupation.toFixed(0)}%)</p><p class="text-yellow-700 text-xs">Gaspillage financier.</p>`;
                         analysisEl.className = "mt-4 bg-yellow-50 border border-yellow-200 p-3 rounded-lg";
                     } else {
-                        analysisEl.innerHTML = `<p class="text-green-800 font-bold text-sm">Diagnostic : Zone Optimale (${occupation.toFixed(0)}%)</p><p class="text-green-700 text-xs">Bonne adéquation charge/capacité.</p>`;
+                        analysisEl.innerHTML = `<p class="text-green-800 font-bold text-sm">Diagnostic : Zone Optimale (${occupation.toFixed(0)}%)</p><p class="text-green-700 text-xs">Bonne adéquation.</p>`;
                         analysisEl.className = "mt-4 bg-green-50 border border-green-200 p-3 rounded-lg";
                     }
                 }
 
-                // Update Chart
-                this.updateChart(totalHours, existingETP * 35, incidentHours); // Compare Hours needed vs Hours Available (12 * 35)
+                this.updateChart(totalHours, existingETP * 35, incidentHours);
             },
 
-            // --- Chart.js Implementation ---
+            // --- LogistiTech Logic ---
+            calcLogisti: function() {
+                const cmd = parseFloat(document.getElementById('lt-cmd').value) || 0;
+                const lignes = parseFloat(document.getElementById('lt-lignes').value) || 0;
+                const totalLignes = cmd * lignes;
+                
+                // 20 pers * 15 lignes/h = 300 lignes/h capacity
+                const capacityPerHour = 20 * 15;
+                const timeNeeded = totalLignes / capacityPerHour;
+
+                document.getElementById('lt-res-vol').innerText = totalLignes;
+                document.getElementById('lt-res-time').innerText = timeNeeded.toFixed(1) + " Heures";
+
+                // Step visual update
+                if(totalLignes > 0) {
+                    document.getElementById('step2-icon').classList.remove('step-inactive');
+                    document.getElementById('step2-icon').classList.add('step-active');
+                    document.getElementById('step3-icon').classList.remove('step-inactive');
+                    document.getElementById('step3-icon').classList.add('step-active');
+                }
+
+                // Cost Calculations
+                // Opt A: Standard Transp + Penalties
+                const costA = (cmd * this.logistiData.coutTrspStd) + (cmd * this.logistiData.penalite);
+                
+                // Opt B: Express Transp
+                const costB = (cmd * this.logistiData.coutTrspExp);
+
+                // Opt C: Overtime + Standard Transp
+                // HS Cost = Time * Team * CostH * Majoration
+                const hsCost = timeNeeded * this.logistiData.team * this.logistiData.coutH * this.logistiData.majoration;
+                const costC = hsCost + (cmd * this.logistiData.coutTrspStd);
+
+                this.updateLogistiChart(costA, costB, costC);
+            },
+
+            selectOption: function(opt) {
+                const feedbackEl = document.getElementById('decision-feedback');
+                feedbackEl.classList.remove('hidden');
+                
+                if (opt === 'C') {
+                    feedbackEl.className = "mt-4 p-4 rounded-lg text-sm bg-green-100 border border-green-300 text-green-900";
+                    feedbackEl.innerHTML = "<strong>✅ Excellente décision !</strong><br>Les Heures Supplémentaires (~5 000€) sont bien moins chères que le Transport Express (~10 000€) ou les pénalités (~10 300€).<br>De plus, vous sauvez le NPS en livrant J+1 (standard départ le soir même). M. Morel validera.";
+                } else if (opt === 'B') {
+                    feedbackEl.className = "mt-4 p-4 rounded-lg text-sm bg-yellow-100 border border-yellow-300 text-yellow-900";
+                    feedbackEl.innerHTML = "<strong>⚠️ Choix Acceptable mais Coûteux.</strong><br>Le Transport Express (~10 000€) sauve le client (NPS OK), mais coûte le double des Heures Supplémentaires. M. Morel appréciera la qualité, mais critiquera la gestion financière.";
+                } else {
+                    feedbackEl.className = "mt-4 p-4 rounded-lg text-sm bg-red-100 border border-red-300 text-red-900";
+                    feedbackEl.innerHTML = "<strong>❌ Mauvaise décision.</strong><br>C'est l'option la plus chère (~10 300€ avec pénalités) et la pire pour le client (Livraison J+2). Le NPS va s'effondrer.";
+                }
+            },
+
+            // --- Chart.js Instances ---
             chartInstance: null,
+            logistiChartInstance: null,
+
             initChart: function() {
                 const ctx = document.getElementById('etpChart');
                 if(!ctx) return;
-                
                 this.chartInstance = new Chart(ctx.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: ['Charge de Travail (H)', 'Capacité Disponible (H)'],
+                        labels: ['Charge (H)', 'Capacité (H)'],
                         datasets: [
-                            {
-                                label: 'Base',
-                                data: [0, 0],
-                                backgroundColor: ['#3b82f6', '#9ca3af'], // Blue, Gray
-                                borderRadius: 4,
-                                order: 2
-                            },
-                            {
-                                label: 'Incident',
-                                data: [0, 0],
-                                backgroundColor: '#f97316', // Orange
-                                borderRadius: 4,
-                                order: 1
-                            }
+                            { label: 'Base', data: [0, 0], backgroundColor: ['#3b82f6', '#9ca3af'], borderRadius: 4, order: 2 },
+                            { label: 'Incident', data: [0, 0], backgroundColor: '#f97316', borderRadius: 4, order: 1 }
                         ]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'bottom'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.raw.toFixed(1) + ' H';
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Heures'
-                                }
-                            }
-                        }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true } } }
                 });
             },
 
             updateChart: function(totalNeeded, totalAvailable, incidentHours) {
                 if(!this.chartInstance) return;
-
                 const baseNeeded = totalNeeded - incidentHours;
-                
-                // Dataset 0: Base
                 this.chartInstance.data.datasets[0].data = [baseNeeded, totalAvailable];
-                
-                // Dataset 1: Incident (Stacked on Needed)
                 this.chartInstance.data.datasets[1].data = [incidentHours, 0];
-                
-                // Set stacking only for the "Needed" bar logically
-                this.chartInstance.options.scales.x = { stacked: true };
-                this.chartInstance.options.scales.y = { stacked: true };
-
                 this.chartInstance.update();
+            },
+
+            initLogistiChart: function() {
+                const ctx = document.getElementById('logistiChart');
+                if(!ctx) return;
+                this.logistiChartInstance = new Chart(ctx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Option A (Echec)', 'Option B (Express)', 'Option C (H. Sup)'],
+                        datasets: [{
+                            label: 'Coût Total (€)',
+                            data: [0, 0, 0],
+                            backgroundColor: ['#ef4444', '#f97316', '#22c55e'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: (c) => c.raw.toLocaleString('fr-FR', {style:'currency', currency:'EUR'}) } }
+                        },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            },
+
+            updateLogistiChart: function(a, b, c) {
+                if(!this.logistiChartInstance) return;
+                this.logistiChartInstance.data.datasets[0].data = [a, b, c];
+                this.logistiChartInstance.update();
             }
         };
 
-        // Initialize App on Load
-        document.addEventListener('DOMContentLoaded', () => {
-            app.init();
-        });
+        document.addEventListener('DOMContentLoaded', () => { app.init(); });
     </script>
 </body>
 </html>
