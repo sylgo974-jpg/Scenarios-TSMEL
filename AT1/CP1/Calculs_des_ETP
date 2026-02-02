@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Pédagogique : Sylvain GORECKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; height: 300px; max-height: 400px; }
+        .active-tab { border-bottom: 2px solid #f97316; color: #f97316; font-weight: 600; }
+        .timeline-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background-color: #e2e8f0; z-index: 0; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .quiz-card.active .answer-block { display: block; }
+    </style>
+    <!-- Chosen Palette: Logistique Professionnelle - Fonds neutres chaleureux (Ardoise/Gris), Bleu profond pour la structure, Orange "Sécurité" pour les actions et points d'attention. -->
+    <!-- Application Structure Plan: 
+         1. En-tête : Informations sur le formateur, le public (TSMEL) et les horaires.
+         2. Navigation par onglets : Permet de basculer entre la "Ligne du Temps" (déroulé de la journée), l'"Analyse de Bloom" (répartition pédagogique) et la "Boîte à Outils" (calculateur ETP et Quiz).
+         3. Vue Chronologique : Liste verticale interactive. Chaque séquence affiche les objectifs, méthodes et l'alternative "Plan B" (papier/tableau blanc).
+         4. Analyse Pédagogique : Graphique Chart.js pour visualiser l'équilibre de la journée selon Bloom et tableau de cohérence des 3C de Tyler.
+         5. Boîte à Outils : 
+            - Simulateur ETP : Outil de calcul fonctionnel en JS.
+            - Grille d'évaluation : Système de scoring numérique pour Tropik Drive.
+            - Quiz : Cartes interactives pour les 7 questions de réglementation.
+         Pourquoi cette structure ? Elle transforme un document statique en un outil d'aide à l'animation pour le formateur, facilitant l'accès aux ressources et aux solutions de secours.
+    -->
+    <!-- Visualization & Content Choices:
+         - Chronologie : HTML/Flexbox pour la clarté de l'organisation.
+         - Graphique de Bloom : Doughnut Chart (Chart.js) pour montrer la dominance de l'application et de l'analyse.
+         - Simulateur ETP : Logique JS pour rendre la formule (Volume * TU / 60 / 151.67) concrète.
+         - Cartes de Quiz : Composants HTML interactifs pour la révision.
+         - Grille de critères : Tableau interactif avec calcul de score en temps réel.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- En-tête -->
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Scénario Pédagogique Interactif</h1>
+                    <p class="text-sm text-slate-500">Réglementation & Pilotage des Effectifs | Formateur : <span class="font-semibold text-slate-700">Sylvain GORECKI</span></p>
+                </div>
+                <div class="flex space-x-6 text-sm">
+                    <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span> 08h30 - 16h30
+                    </div>
+                    <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span> Public : TSMEL
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Onglets de Navigation -->
+            <nav class="flex space-x-8 mt-6 overflow-x-auto no-scrollbar border-t border-slate-100 pt-4">
+                <button onclick="switchTab('timeline')" id="tab-timeline" class="active-tab pb-3 px-1 transition-all whitespace-nowrap">Déroulé & Alternatives</button>
+                <button onclick="switchTab('analytics')" id="tab-analytics" class="pb-3 px-1 text-slate-500 hover:text-slate-900 transition-all whitespace-nowrap">Analyse de Bloom</button>
+                <button onclick="switchTab('toolkit')" id="tab-toolkit" class="pb-3 px-1 text-slate-500 hover:text-slate-900 transition-all whitespace-nowrap">Outils & Quiz</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- VUE 1 : CHRONOLOGIE -->
+        <div id="view-timeline" class="space-y-8 animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Fil Conducteur de la Journée</h2>
+                    <span class="text-xs font-medium text-slate-400 italic">Cliquez sur "Plan B" pour voir les alternatives</span>
+                </div>
+                
+                <div class="relative pl-4" id="timeline-container">
+                    <div class="timeline-line"></div>
+                    <!-- Les séquences seront injectées ici par JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- VUE 2 : ANALYSE PÉDAGOGIQUE -->
+        <div id="view-analytics" class="hidden space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Intro Analytics -->
+                <div class="col-span-1 lg:col-span-2 bg-blue-50 border border-blue-100 rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-blue-900 mb-2">Alignement Pédagogique (Bloom & Tyler)</h3>
+                    <p class="text-blue-800 text-sm">Cette analyse permet de vérifier l'équilibre entre la théorie et la pratique. La journée est centrée sur l'<strong>Application</strong> et l'<strong>Analyse</strong> (Étude de cas Tropik Drive), garantissant une montée en compétences opérationnelle.</p>
+                </div>
+
+                <!-- Bloom Chart -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Répartition Cognitive (Bloom)</h3>
+                    <div class="chart-container">
+                        <canvas id="bloomChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-slate-400 mt-4 italic">Répartition basée sur le nombre de séquences par niveau</p>
+                </div>
+
+                <!-- 3C Matrix -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Matrice de Cohérence (3C)</h3>
+                    <div class="overflow-auto flex-grow">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3 rounded-l-lg">Objectif (Cohérence)</th>
+                                    <th class="px-4 py-3">Niveau</th>
+                                    <th class="px-4 py-3 rounded-r-lg">Évaluation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-100">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Réglementation Sociale</td>
+                                    <td class="px-4 py-3 text-blue-600 font-semibold">Connaître</td>
+                                    <td class="px-4 py-3">Diagnostique (Oral)</td>
+                                </tr>
+                                <tr class="border-b border-slate-100">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Calcul des ETP</td>
+                                    <td class="px-4 py-3 text-green-600 font-semibold">Appliquer</td>
+                                    <td class="px-4 py-3">Formative (Exercices)</td>
+                                </tr>
+                                <tr class="border-b border-slate-100">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Gestion des Aléas</td>
+                                    <td class="px-4 py-3 text-purple-600 font-semibold">Analyser</td>
+                                    <td class="px-4 py-3">Formelle (Grille)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-medium text-slate-900">Plan d'action Manager</td>
+                                    <td class="px-4 py-3 text-orange-600 font-semibold">Créer</td>
+                                    <td class="px-4 py-3">Non-formelle (Transfert)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VUE 3 : BOITE A OUTILS -->
+        <div id="view-toolkit" class="hidden space-y-12">
+            
+            <div class="bg-slate-900 rounded-2xl p-8 text-white relative overflow-hidden shadow-xl">
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-4">Calculateur ETP Interactif</h2>
+                        <p class="text-slate-400 mb-8">Utilisez cet outil pour démontrer le calcul des besoins en personnel. La base de calcul est de 151,67 heures par mois.</p>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Volume de travail (Colis / Palettes)</label>
+                                <input type="number" id="calc-vol" oninput="doCalc()" placeholder="Ex: 1200" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-4 text-white focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Temps Unitaire (en minutes)</label>
+                                <input type="number" id="calc-tu" oninput="doCalc()" placeholder="Ex: 2.5" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-4 text-white focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800/50 rounded-xl p-8 border border-slate-700 flex flex-col items-center justify-center text-center">
+                        <div class="mb-8">
+                            <p class="text-slate-400 text-sm uppercase tracking-widest mb-1">Heures Nécessaires</p>
+                            <p class="text-4xl font-mono font-bold" id="out-hours">0.00 h</p>
+                        </div>
+                        <div>
+                            <p class="text-orange-500 text-sm uppercase tracking-widest mb-1 font-bold">Effectif Requis (ETP)</p>
+                            <p class="text-7xl font-mono font-bold text-orange-400" id="out-etp">0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Evaluation Grid -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Grille d'Évaluation Numérique : Tropik Drive</h3>
+                    <div class="space-y-3" id="eval-grid">
+                        <!-- Injected by JS -->
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
+                        <div>
+                            <p class="text-xs text-slate-400 uppercase font-bold">Statut de validation</p>
+                            <p id="eval-status" class="text-sm font-semibold text-slate-500 italic">En attente de notation...</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-slate-400 mr-2">Score :</span>
+                            <span id="total-score" class="text-4xl font-black text-slate-900">0 / 7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Summary -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Révision : Les 7 Points Clés</h3>
+                    <p class="text-xs text-slate-500 mb-6 italic">Cliquez sur une question pour révéler la réponse officielle et le feedback.</p>
+                    <div class="space-y-3" id="quiz-list">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-12 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="inline-block p-4 bg-orange-50 rounded-xl mb-4">
+                <p class="text-orange-800 font-bold text-sm">"Organiser, c'est d'abord prévoir."</p>
+            </div>
+            <p class="text-slate-400 text-xs">Conception : Sylvain GORECKI | Scénario Pédagogique TSMEL 2026</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DONNÉES ---
+        
+        const sequences = [
+            { t: "08h30-09h15", p: "01. Enrôlement", b: "Mémoriser", a: "Ice Breaker : Enjeux de la gestion du temps en logistique.", m: "Interrogative", e: "Diagnostique", alt: "Questions flash orales au tableau blanc.", bloom: "Mémo" },
+            { t: "09h15-10h00", p: "02. Découverte", b: "Connaître", a: "Réglementation : Analyse des seuils (35h, repos, RSE).", m: "Active", e: "Formative", alt: "Lecture dirigée du docx et synthèse papier.", bloom: "Conn" },
+            { t: "10h00-10h15", p: "PAUSE", isBreak: true },
+            { t: "10h15-11h05", p: "03. Appropriation", b: "Comprendre", a: "Vidéo : Temps d'attente à quai & impacts RSE.", m: "Expositive / Active", e: "Formative", alt: "Schéma des flux transport au tableau blanc.", bloom: "Comp" },
+            { t: "11h05-11h55", p: "03. Appropriation", b: "Appliquer", a: "Théorie ETP : Démonstration du calcul (Base 151,67h).", m: "Expositive / Active", e: "Formative", alt: "Exercices sur cahier avec calculatrice.", bloom: "Appl" },
+            { t: "12h00-13h00", p: "DÉJEUNER", isBreak: true },
+            { t: "13h00-13h50", p: "04. Application", b: "Appliquer", a: "Tropik Drive : Calcul des besoins bruts (Tableaux 1&2).", m: "Active", e: "Formative", alt: "Résolution collective au tableau.", bloom: "Appl" },
+            { t: "13h50-14h40", p: "04. Application", b: "Analyser", a: "Gestion Aléa : Cross-dock imprévu du mercredi (Cas réel).", m: "Active", e: "Formelle (Grille)", alt: "Brainstorming en groupe pour solutions Plan B.", bloom: "Anal" },
+            { t: "14h40-15h00", p: "05. Régulation", b: "Évaluer", a: "Feedback Individualisé & correction des erreurs types.", m: "Interrogative", e: "Formative", alt: "Auto-correction par les pairs.", bloom: "Éval" },
+            { t: "15h00-15h10", p: "PAUSE", isBreak: true },
+            { t: "15h10-16h00", p: "05. Régulation", b: "Évaluer", a: "Quiz Final : Questionnaire Microsoft Forms (7 QCM).", m: "Interrogative", e: "Formelle", alt: "Quiz papier avec vote à main levée.", bloom: "Éval" },
+            { t: "16h00-16h30", p: "06. Transfert", b: "Créer", a: "Synthèse : Check-list manager pour le retour en entreprise.", m: "Active", e: "Non-formelle", alt: "Post-its de fin de session.", bloom: "Crée" }
+        ];
+
+        const quizItems = [
+            { q: "Durée légale hebdomadaire ?", a: "35 heures", f: "Durée de référence en France." },
+            { q: "Pause obligatoire logistique ?", a: "20 min après 6h", f: "Obligation du Code du Travail." },
+            { q: "Durée max conduite RSE ?", a: "4h30", f: "Pause de 45 min requise ensuite." },
+            { q: "Signification de RSE ?", a: "Réglem. Sociale Européenne", f: "Attention au piège managérial !" },
+            { q: "Repos journalier normal ?", a: "11 heures", f: "Peut descendre à 9h (3x/sem)." },
+            { q: "Attente quai = Conduite ?", a: "Faux", f: "C'est du temps de service." },
+            { q: "Horaire de nuit par défaut ?", a: "21h00 - 06h00", f: "Selon Art. L3122-29." }
+        ];
+
+        const criteria = [
+            { id: 1, label: "Précision ETP", desc: "Volume x TU / 60", pts: 2 },
+            { id: 2, label: "Légalité", desc: "Repos & durées max", pts: 2 },
+            { id: 3, label: "Gestion Aléa", desc: "Solution réaliste", pts: 2 },
+            { id: 4, label: "Rigueur", desc: "Justification", pts: 1 }
+        ];
+
+        // --- LOGIQUE DE RENDU ---
+
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = sequences.map((s, i) => {
+                if (s.isBreak) {
+                    return `
+                        <div class="relative z-10 mb-6 ml-8 p-3 bg-slate-100 rounded-lg border border-dashed border-slate-300 text-slate-400 text-xs font-bold text-center">
+                            ☕ ${s.t} - ${s.p}
+                        </div>
+                    `;
+                }
+                const colors = { 
+                    "Mémo": "bg-blue-400", "Conn": "bg-blue-600", "Comp": "bg-emerald-500", 
+                    "Appl": "bg-green-600", "Anal": "bg-purple-600", "Éval": "bg-pink-600", "Crée": "bg-orange-500" 
+                };
+                return `
+                    <div class="relative z-10 mb-8 pl-8 group">
+                        <div class="absolute left-[20px] -translate-x-1/2 mt-1.5 w-4 h-4 rounded-full border-2 border-white ${colors[s.bloom] || 'bg-slate-400'} shadow-sm"></div>
+                        <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm group-hover:shadow-md transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">${s.t}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white ${colors[s.bloom] || 'bg-slate-400'}">${s.b}</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 mb-1 text-sm">${s.p}</h4>
+                            <p class="text-xs text-slate-600 mb-3">${s.a}</p>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="text-[10px] bg-slate-50 border border-slate-100 px-2 py-1 rounded text-slate-500">M: ${s.m}</span>
+                                <span class="text-[10px] bg-slate-50 border border-slate-100 px-2 py-1 rounded text-slate-500">E: ${s.e}</span>
+                            </div>
+                            <div class="border-t border-slate-50 pt-3">
+                                <button onclick="toggleAlt(${i})" class="text-[10px] font-bold text-orange-500 flex items-center hover:text-orange-700">
+                                    ⚡ PLAN B (Alternative)
+                                </button>
+                                <p id="alt-${i}" class="hidden mt-2 text-[11px] text-orange-800 bg-orange-50 p-2 rounded border border-orange-100">
+                                    ${s.alt}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderTools() {
+            // Quiz
+            document.getElementById('quiz-list').innerHTML = quizItems.map((q, i) => `
+                <div onclick="this.classList.toggle('active')" class="quiz-card cursor-pointer bg-slate-50 border border-slate-200 rounded-lg p-3 hover:bg-white transition-all">
+                    <p class="text-xs font-bold text-slate-800">${i+1}. ${q.q}</p>
+                    <div class="answer-block hidden mt-2 pt-2 border-t border-slate-100">
+                        <p class="text-xs font-bold text-green-600">✔ ${q.a}</p>
+                        <p class="text-[10px] text-slate-500 mt-1">${q.f}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Grille Eval
+            document.getElementById('eval-grid').innerHTML = criteria.map(c => `
+                <div class="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-xl shadow-sm">
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">${c.label}</p>
+                        <p class="text-[10px] text-slate-400 italic">${c.desc}</p>
+                    </div>
+                    <div class="flex gap-1">
+                        ${Array.from({length: c.pts + 1}, (_, score) => `
+                            <button onclick="setScore(${c.id}, ${score}, ${c.pts})" id="btn-${c.id}-${score}" class="w-10 h-10 rounded-lg border border-slate-200 text-xs font-bold hover:bg-slate-50 transition-all">
+                                ${score}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- INTERACTIONS JS ---
+
+        function switchTab(id) {
+            ['timeline', 'analytics', 'toolkit'].forEach(t => {
+                document.getElementById('view-' + t).classList.add('hidden');
+                document.getElementById('tab-' + t).classList.remove('active-tab');
+            });
+            document.getElementById('view-' + id).classList.remove('hidden');
+            document.getElementById('tab-' + id).classList.add('active-tab');
+        }
+
+        function toggleAlt(i) {
+            const el = document.getElementById('alt-' + i);
+            el.classList.toggle('hidden');
+        }
+
+        function doCalc() {
+            const vol = parseFloat(document.getElementById('calc-vol').value) || 0;
+            const tu = parseFloat(document.getElementById('calc-tu').value) || 0;
+            const hours = (vol * tu) / 60;
+            const etp = hours / 151.67;
+            document.getElementById('out-hours').innerText = hours.toFixed(2) + " h";
+            document.getElementById('out-etp').innerText = etp.toFixed(2);
+        }
+
+        let scores = { 1: 0, 2: 0, 3: 0, 4: 0 };
+        function setScore(id, val, max) {
+            scores[id] = val;
+            // Update buttons
+            for (let i = 0; i <= max; i++) {
+                const btn = document.getElementById(`btn-${id}-${i}`);
+                btn.className = (i === val) 
+                    ? "w-10 h-10 rounded-lg border border-orange-500 bg-orange-500 text-white text-xs font-bold transition-all shadow-md scale-110" 
+                    : "w-10 h-10 rounded-lg border border-slate-200 text-xs font-bold hover:bg-slate-50 transition-all";
+            }
+            const total = Object.values(scores).reduce((a, b) => a + b, 0);
+            document.getElementById('total-score').innerText = total + " / 7";
+            
+            const status = document.getElementById('eval-status');
+            if(total >= 6) { status.innerText = "Excellent !"; status.className = "text-sm font-bold text-green-600"; }
+            else if(total >= 4) { status.innerText = "Validation acquise."; status.className = "text-sm font-bold text-blue-600"; }
+            else { status.innerText = "À retravailler."; status.className = "text-sm font-bold text-orange-600"; }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('bloomChart').getContext('2d');
+            const counts = {};
+            sequences.filter(s => !s.isBreak).forEach(s => counts[s.b] = (counts[s.b] || 0) + 1);
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        data: Object.values(counts),
+                        backgroundColor: ['#60a5fa', '#3b82f6', '#10b981', '#059669', '#8b5cf6', '#db2777', '#f97316'],
+                        hoverOffset: 10,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        window.onload = () => {
+            renderTimeline();
+            renderTools();
+            initChart();
+        };
+
+    </script>
+</body>
+</html>
