@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scénario Pédagogique : Maîtrise des TCD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFAF9; /* Stone-50 */
+            color: #1C1917; /* Stone-900 */
+        }
+
+        /* CHART CONTAINER STYLING - MANDATORY */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; 
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Transition Classes */
+        .card-transition {
+            transition: all 0.4s ease-in-out;
+        }
+        
+        .analog-mode {
+            background-color: #FEF3C7 !important; /* Amber-100 for paper feel */
+            border-left-color: #D97706 !important; /* Amber-600 */
+        }
+    </style>
+    <!-- Chosen Palette: Warm Stone & Corporate Blue. Background: Stone-50. Primary: Stone-800. Accents: Blue-600 (Digital), Amber-500 (Analog/Warning), Emerald-600 (Success). -->
+    <!-- Application Structure Plan: Dashboard-First approach. 
+         1. Header: Quick context (Trainer, Goal).
+         2. Analytics Dashboard: Visualizes the balance of the training (Bloom distribution & Method mix) to validate pedagogical quality.
+         3. Control Center: Filters and the specific "No Power" Toggle to switch contexts.
+         4. Interactive Timeline: The main flow. Cards represent time slots. They expand for details. They react to the "No Power" toggle by swapping content.
+         5. Evaluation Grid: Static reference for success criteria.
+         This structure helps the trainer visualize the day's flow and instantly access the backup plan. -->
+    <!-- Visualization & Content Choices: 
+         1. Bloom Taxonomy -> Goal: Balance Check -> Viz: Doughnut Chart (Chart.js) -> Interaction: Tooltip -> Standard distribution viz.
+         2. Teaching Methods -> Goal: Method Mix -> Viz: Bar Chart (Chart.js) -> Interaction: Tooltip -> Comparison of active vs passive time.
+         3. Timeline Items -> Goal: Schedule Flow -> Viz: Card List -> Interaction: Expansion & Content Swap (Digital/Analog) -> Clear readability.
+         4. Evaluation Criteria -> Goal: Checklist -> Viz: Styled HTML Table -> Interaction: None -> Clean reference. 
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 min-h-screen">
+
+    <!-- HEADER SECTION -->
+    <header class="bg-white shadow-sm border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-stone-800">Scénario Pédagogique <span class="text-blue-600">TCD Excel</span></h1>
+                <p class="text-sm text-stone-500">Formateur : Sylvain GORECKI | Durée : 7h</p>
+            </div>
+            <div class="hidden md:block text-right">
+                <div class="text-xs font-semibold uppercase tracking-wider text-stone-400">Objectif Global (3C Tyler)</div>
+                <div class="text-sm font-medium text-stone-700 max-w-md">Concevoir et automatiser des analyses de données complexes via Excel.</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- INTRO & ANALYTICS SECTION -->
+        <section>
+            <div class="mb-6">
+                <h2 class="text-xl font-bold text-stone-800 mb-2">📊 Tableau de Bord Pédagogique</h2>
+                <p class="text-stone-600 leading-relaxed max-w-4xl">
+                    Cette section offre une vue d'ensemble de la stratégie pédagogique de la journée. Les graphiques ci-dessous permettent de vérifier l'alignement avec la taxonomie de Bloom (progression de la difficulté cognitive) et l'équilibre des méthodes d'apprentissage (Active vs Expositive), garantissant une journée dynamique pour l'apprenant.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Bloom Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-semibold text-stone-700 mb-4 text-center">Répartition Taxonomie de Bloom</h3>
+                    <div class="chart-container">
+                        <canvas id="bloomChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-stone-400 mt-2">Niveaux cognitifs sollicités durant la journée</p>
+                </div>
+
+                <!-- Methods Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-semibold text-stone-700 mb-4 text-center">Mix Méthodes Pédagogiques</h3>
+                    <div class="chart-container">
+                        <canvas id="methodsChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-stone-400 mt-2">Distribution des temps par méthode</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIMELINE & CONTROLS SECTION -->
+        <section>
+            <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-6 gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-stone-800 mb-2">⏱️ Déroulé Séquencé</h2>
+                    <p class="text-stone-600 max-w-2xl">
+                        Voici le fil conducteur de la journée. Utilisez les filtres pour isoler les types d'activités.
+                        <br><strong>Fonction critique :</strong> Activez le mode "Panne de Courant" pour voir instantanément le plan de secours analogique.
+                    </p>
+                </div>
+                
+                <!-- Power Outage Toggle -->
+                <div class="flex items-center bg-stone-200 rounded-full p-1 cursor-pointer transition-colors duration-300" id="powerToggleWrapper" onclick="togglePowerMode()">
+                    <div class="px-4 py-2 rounded-full text-sm font-bold text-stone-500 transition-all" id="modeDigital">🖥️ Digital</div>
+                    <div class="px-4 py-2 rounded-full text-sm font-bold text-stone-500 transition-all" id="modeAnalog">⚡ Sans Courant</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button onclick="filterTimeline('all')" class="px-3 py-1 text-sm rounded-md bg-stone-800 text-white hover:bg-stone-700 transition">Tout voir</button>
+                <button onclick="filterTimeline('Active')" class="px-3 py-1 text-sm rounded-md bg-white border border-stone-300 text-stone-600 hover:bg-stone-50 transition">Méthode Active</button>
+                <button onclick="filterTimeline('Evaluations')" class="px-3 py-1 text-sm rounded-md bg-white border border-stone-300 text-stone-600 hover:bg-stone-50 transition">Évaluations</button>
+                <button onclick="filterTimeline('Pause')" class="px-3 py-1 text-sm rounded-md bg-white border border-stone-300 text-stone-600 hover:bg-stone-50 transition">Pauses</button>
+            </div>
+
+            <!-- Timeline Container -->
+            <div id="timelineContainer" class="space-y-4">
+                <!-- Javascript will inject content here -->
+            </div>
+        </section>
+
+        <!-- EVALUATION CRITERIA SECTION -->
+        <section class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+            <div class="p-6 bg-stone-50 border-b border-stone-200">
+                <h2 class="text-xl font-bold text-stone-800">✅ Grille d'Évaluation (Critères de Réussite)</h2>
+                <p class="text-stone-600 mt-2">
+                    Ces critères permettent de valider l'objectif global de la formation selon les 3C de Tyler. Ils servent de référence pour l'évaluation formative finale de 16h00.
+                </p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-stone-200">
+                    <thead class="bg-stone-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">Compétence Visée</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">Indicateurs (Critères)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">Validation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-stone-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">Intégrité des données</td>
+                            <td class="px-6 py-4 text-sm text-stone-600">La source de données est transformée en tableau structuré sans lignes vides.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-400">[ ] OUI / [ ] NON</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">Paramétrage TCD</td>
+                            <td class="px-6 py-4 text-sm text-stone-600">Le TCD répond précisément à la question posée (ex: Somme vs Nombre).</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-400">[ ] OUI / [ ] NON</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">Analyse temporelle</td>
+                            <td class="px-6 py-4 text-sm text-stone-600">Les données sont groupées par mois ou trimestres de manière cohérente.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-400">[ ] OUI / [ ] NON</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">Ergonomie visuelle</td>
+                            <td class="px-6 py-4 text-sm text-stone-600">Présence d'au moins un segment (Slicer) fonctionnel et un graphique lié.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-400">[ ] OUI / [ ] NON</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">Interprétation</td>
+                            <td class="px-6 py-4 text-sm text-stone-600">L'apprenant peut expliquer oralement la tendance majeure du graphique.</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-400">[ ] OUI / [ ] NON</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm">Généré pour l'Ingénierie de Formation TCD Excel</p>
+            <p class="text-xs mt-2">© 2024 Sylvain GORECKI - Document de travail interne</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA STORAGE ---
+        // Storing the report data in a structured format for easy manipulation
+        const sessionData = [
+            { time: "08:30", type: "Intro", duration: 15, intent: "Créer un climat de confiance", bloom: "N/A", method: "Active / Interrogative", activity: "Brise-glace & Présentation du programme", alt: "Tour de table sur les enjeux du stockage", tools: "Canvas / Docx", eval: "Diagnostique" },
+            { time: "08:45", type: "Module", duration: 30, intent: "Rappeler les principes AMDEC", bloom: "Mémoriser", method: "Interrogative", activity: "Quiz rappel notionnel (G, F, D)", alt: "Analyse de risques AMDEC sur papier (cas d'une panne chariot)", tools: "Microsoft Forms", eval: "Formative non-Formelle" },
+            { time: "09:15", type: "Module", duration: 45, intent: "Identifier une base saine", bloom: "Connaître", method: "Expositive / Active", activity: "Vérification du tableau de données source", alt: "Lister les colonnes indispensables d'un cahier des charges", tools: "PC / Données existantes", eval: "Formative non-Formelle" },
+            { time: "10:00", type: "Pause", duration: 15, intent: "Pause", bloom: "N/A", method: "N/A", activity: "Pause Café ☕", alt: "Pause (discussion informelle)", tools: "N/A", eval: "N/A" },
+            { time: "10:15", type: "Module", duration: 45, intent: "Créer un TCD simple", bloom: "Appliquer", method: "Active", activity: "Mise en situation : Analyse CA/Client ou CA/Produit", alt: "Dessiner l'arborescence logique des filtres sur papier", tools: "PC / Excel", eval: "Formative non-Formelle" },
+            { time: "11:00", type: "Module", duration: 50, intent: "Segmenter par périodes", bloom: "Analyser", method: "Active / Interrogative", activity: "Analyse temporelle (mois/trimestres)", alt: "Planifier les cycles d'inventaires sur calendrier papier", tools: "PC / Excel", eval: "Formative non-Formelle" },
+            { time: "11:50", type: "Module", duration: 40, intent: "Extraire des indicateurs", bloom: "Appliquer", method: "Active", activity: "Cas pratique : Top 5 clients et marges", alt: "Ébauche d'un plan d'implantation (Zonage ABC)", tools: "PC / Excel", eval: "Formative Formelle" },
+            { time: "12:30", type: "Pause", duration: 60, intent: "Déjeuner", bloom: "N/A", method: "N/A", activity: "Repas 🍽️", alt: "Repas", tools: "N/A", eval: "N/A" },
+            { time: "13:30", type: "Module", duration: 50, intent: "Paramétrer les valeurs", bloom: "Analyser", method: "Expositive / Active", activity: "Paramètres de champs (% du total, Cumul)", alt: "Calculer des surfaces de stockage à la main", tools: "PC / Excel", eval: "Formative non-Formelle" },
+            { time: "14:20", type: "Module", duration: 40, intent: "Mettre en place des segments", bloom: "Créer", method: "Active", activity: "Utilisation des Slicers (Segments) et Chronologie", alt: "Définir les règles d'adressage du stock (écrit)", tools: "PC / Excel", eval: "Formative non-Formelle" },
+            { time: "15:00", type: "Pause", duration: 10, intent: "Pause", bloom: "N/A", method: "N/A", activity: "Pause courte", alt: "Pause courte", tools: "N/A", eval: "N/A" },
+            { time: "15:10", type: "Module", duration: 50, intent: "Générer un visuel GCD", bloom: "Créer", method: "Active", activity: "Création d'un mini-dashboard interactif", alt: "Schématiser un tableau de bord visuel mural", tools: "PC / Excel", eval: "Formative Formelle" },
+            { time: "16:00", type: "Module", duration: 30, intent: "Valider les acquis", bloom: "Evaluer", method: "Interrogative", activity: "Quiz final de synthèse & Bilan", alt: "Rédaction des clauses de maintenance du stock", tools: "Microsoft Forms", eval: "Formative Formelle" }
+        ];
+
+        let powerOutageMode = false;
+
+        // --- CHART INITIALIZATION ---
+        
+        function initCharts() {
+            // Data Processing for Charts
+            const bloomCounts = {};
+            const methodCounts = {};
+
+            sessionData.forEach(item => {
+                if (item.type === 'Module') {
+                    // Bloom
+                    bloomCounts[item.bloom] = (bloomCounts[item.bloom] || 0) + item.duration;
+                    
+                    // Methods (simplifying logic to main category)
+                    let methodKey = item.method.split('/')[0].trim();
+                    if(methodKey.toLowerCase().includes('active')) methodKey = 'Active';
+                    if(methodKey.toLowerCase().includes('expositive')) methodKey = 'Expositive';
+                    if(methodKey.toLowerCase().includes('interrogative')) methodKey = 'Interrogative';
+                    
+                    methodCounts[methodKey] = (methodCounts[methodKey] || 0) + item.duration;
+                }
+            });
+
+            // Bloom Chart (Doughnut)
+            const ctxBloom = document.getElementById('bloomChart').getContext('2d');
+            new Chart(ctxBloom, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(bloomCounts),
+                    datasets: [{
+                        data: Object.values(bloomCounts),
+                        backgroundColor: ['#e7e5e4', '#d6d3d1', '#a8a29e', '#78716c', '#57534e', '#44403c'], // Stone shades
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+
+            // Method Chart (Bar)
+            const ctxMethod = document.getElementById('methodsChart').getContext('2d');
+            new Chart(ctxMethod, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(methodCounts),
+                    datasets: [{
+                        label: 'Minutes',
+                        data: Object.values(methodCounts),
+                        backgroundColor: ['#2563EB', '#F59E0B', '#10B981'], // Blue, Amber, Emerald
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // --- TIMELINE RENDERING LOGIC ---
+
+        function renderTimeline(filter = 'all') {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+
+            sessionData.forEach((item, index) => {
+                // Filter Logic
+                if (filter !== 'all') {
+                    if (filter === 'Pause' && item.type !== 'Pause') return;
+                    if (filter === 'Active' && !item.method.toLowerCase().includes('active')) return;
+                    if (filter === 'Evaluations' && item.eval === 'N/A') return;
+                }
+
+                // Card Styling based on type and Power Mode
+                let borderColor = 'border-stone-200';
+                let icon = '📌';
+                
+                if (item.type === 'Pause') {
+                    borderColor = 'border-stone-100 bg-stone-50 opacity-70';
+                    icon = '☕';
+                } else if (item.eval.includes('Formelle')) {
+                    borderColor = 'border-l-4 border-l-emerald-500 border-t border-r border-b border-stone-200';
+                    icon = '✅';
+                } else {
+                    borderColor = 'border-l-4 border-l-blue-500 border-t border-r border-b border-stone-200';
+                    icon = '📘';
+                }
+
+                // Content Selection (Normal vs Power Outage)
+                const currentActivity = powerOutageMode ? item.alt : item.activity;
+                const currentTools = powerOutageMode ? "Papier, Crayon, Tableau" : item.tools;
+                const modeClass = powerOutageMode ? 'analog-mode' : '';
+                
+                // HTML Template
+                const card = document.createElement('div');
+                card.className = `card-transition bg-white rounded-lg p-5 border shadow-sm flex flex-col md:flex-row gap-4 ${borderColor} ${modeClass}`;
+                
+                // Add specific warning icon for Power Mode
+                const displayIcon = powerOutageMode && item.type === 'Module' ? '⚡' : icon;
+
+                card.innerHTML = `
+                    <div class="md:w-32 flex-shrink-0 flex flex-row md:flex-col items-center md:items-start gap-2">
+                        <span class="text-xl">${displayIcon}</span>
+                        <div>
+                            <span class="block font-bold text-lg text-stone-800">${item.time}</span>
+                            <span class="text-xs text-stone-500">${item.duration} min</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg text-stone-800 mb-1">${currentActivity}</h3>
+                            ${item.bloom !== 'N/A' ? `<span class="px-2 py-1 rounded bg-stone-100 text-xs font-semibold text-stone-600">${item.bloom}</span>` : ''}
+                        </div>
+                        
+                        <p class="text-sm text-stone-600 mb-3 italic">"${item.intent}"</p>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-stone-500">
+                            ${item.method !== 'N/A' ? `
+                                <div class="flex items-center gap-1">
+                                    <span class="font-semibold">Méthode:</span> ${item.method}
+                                </div>` : ''}
+                            ${item.tools !== 'N/A' ? `
+                                <div class="flex items-center gap-1">
+                                    <span class="font-semibold">Outils:</span> ${currentTools}
+                                </div>` : ''}
+                            ${item.eval !== 'N/A' ? `
+                                <div class="flex items-center gap-1">
+                                    <span class="font-semibold">Éval:</span> ${item.eval}
+                                </div>` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- INTERACTION HANDLERS ---
+
+        function togglePowerMode() {
+            powerOutageMode = !powerOutageMode;
+            
+            // Toggle UI Switch Visuals
+            const wrapper = document.getElementById('powerToggleWrapper');
+            const digitalBtn = document.getElementById('modeDigital');
+            const analogBtn = document.getElementById('modeAnalog');
+
+            if (powerOutageMode) {
+                wrapper.classList.remove('bg-stone-200');
+                wrapper.classList.add('bg-amber-200');
+                digitalBtn.classList.replace('text-stone-500', 'text-stone-400');
+                analogBtn.classList.replace('text-stone-500', 'text-amber-800');
+                analogBtn.classList.add('bg-white', 'shadow-sm');
+                digitalBtn.classList.remove('bg-white', 'shadow-sm');
+            } else {
+                wrapper.classList.add('bg-stone-200');
+                wrapper.classList.remove('bg-amber-200');
+                analogBtn.classList.replace('text-amber-800', 'text-stone-500');
+                digitalBtn.classList.replace('text-stone-400', 'text-stone-500');
+                digitalBtn.classList.add('bg-white', 'shadow-sm');
+                analogBtn.classList.remove('bg-white', 'shadow-sm');
+            }
+
+            // Re-render Timeline
+            renderTimeline();
+        }
+
+        function filterTimeline(criteria) {
+            renderTimeline(criteria);
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            renderTimeline();
+            
+            // Highlight default digital mode
+            document.getElementById('modeDigital').classList.add('bg-white', 'shadow-sm');
+        });
+
+    </script>
+</body>
+</html>
