@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opération Fluidité - Simulation TSMEL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .context-banner {
+            background: #ff6b6b;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #dee2e6;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #e9ecef;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab:hover {
+            background: #dee2e6;
+        }
+
+        .tab.active {
+            background: white;
+            color: #2a5298;
+            border-bottom: 4px solid #2a5298;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mission-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .mission-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .mission-card .icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        .mission-section {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .mission-section h4 {
+            color: #2a5298;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .mission-section ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 5px solid #0c5460;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .truck-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .truck-table th {
+            background: #2a5298;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.1em;
+        }
+
+        .truck-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .truck-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .truck-table tr.alert-row {
+            background: #fff3cd;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: #2a5298;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #2a5298;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .quai-display {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .quai-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .formula-box {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #2a5298;
+            margin: 10px 0;
+            font-size: 1.05em;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .tabs {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quai-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 OPÉRATION FLUIDITÉ</h1>
+            <div class="subtitle">Simulation de Gestion Logistique - Formation TSMEL</div>
+            <div style="margin-top: 15px; font-size: 0.9em;">Direction Logistique | Journée Test Cadres</div>
+        </div>
+
+        <div class="context-banner">
+            📅 LUNDI | Vacation 7h00 - 13h00 | 10 Camions + 1 ALÉA | 5 Quais Disponibles
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('contexte')">📋 Contexte</button>
+            <button class="tab" onclick="showTab('binome')">👥 Mission Binôme Quai</button>
+            <button class="tab" onclick="showTab('clement')">📦 Mission Clément</button>
+            <button class="tab" onclick="showTab('donnees')">📊 Données Techniques</button>
+            <button class="tab" onclick="showTab('planning')">⏰ Planning Arrivages</button>
+        </div>
+
+        <div class="content">
+            <!-- TAB 1: CONTEXTE -->
+            <div id="contexte" class="tab-content active">
+                <h2 style="color: #2a5298; margin-bottom: 20px;">🎯 Contexte de l'Opération</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="label">Camions à gérer</div>
+                        <div class="number">11</div>
+                        <div class="label">(10 prévus + 1 imprévu)</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="label">Total Palettes</div>
+                        <div class="number">233</div>
+                        <div class="label">(à calculer par type)</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <div class="label">Quais Disponibles</div>
+                        <div class="number">5</div>
+                        <div class="label">Nombre maximum</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <div class="label">Durée Vacation</div>
+                        <div class="number">6h</div>
+                        <div class="label">7h00 - 13h00</div>
+                    </div>
+                </div>
+
+                <div class="mission-card">
+                    <h3><span class="icon">🎯</span>Objectif de la Journée</h3>
+                    <p style="font-size: 1.1em; line-height: 1.6;">
+                        Gérer la chaîne logistique complète : <strong>Arrivée Camion → Déchargement (Quai) → Mise en Stock (Rangement)</strong>
+                    </p>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">🏭 Infrastructure Disponible</h3>
+
+                <div class="info-box">
+                    <h4 style="color: #0c5460; margin-bottom: 15px;">🚪 Les 5 Quais de Déchargement</h4>
+                    <p style="margin-bottom: 15px;">Votre entrepôt dispose de 5 quais de déchargement maximum. Vous devez gérer l'affectation des camions sur ces quais de manière optimale.</p>
+                </div>
+
+                <div class="quai-display">
+                    <div class="quai-card">QUAI 1</div>
+                    <div class="quai-card">QUAI 2</div>
+                    <div class="quai-card">QUAI 3</div>
+                    <div class="quai-card">QUAI 4</div>
+                    <div class="quai-card">QUAI 5</div>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">👨‍💼 L'Équipe</h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="mission-section">
+                        <h4>🚛 Binôme Quai</h4>
+                        <p><strong>Landry & Nolan</strong></p>
+                        <ul>
+                            <li>Accueil des camions</li>
+                            <li>Sécurité et mise à quai</li>
+                            <li>Déchargement des palettes</li>
+                            <li>Gestion des 5 quais disponibles</li>
+                            <li><strong>Dimensionnement équipe quai</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="mission-section">
+                        <h4>📦 Responsable Stock</h4>
+                        <p><strong>Clément</strong></p>
+                        <ul>
+                            <li>Récupération palettes sur quai</li>
+                            <li>Rangement en palettiers</li>
+                            <li>Gestion flux sortant quai</li>
+                            <li><strong>Dimensionnement équipe caristes</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="danger-box">
+                    <h4 style="color: #dc3545; margin-bottom: 10px;">⚠️ ALÉA CRITIQUE À 10h30</h4>
+                    <p><strong>Camion imprévu de la centrale</strong> avec <strong>33 palettes en Cross-Docking</strong> (transit immédiat, pas de mise en stock). Cet événement va impacter votre planification !</p>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">📦 Liste des Arrivages</h3>
+                <table class="truck-table">
+                    <thead>
+                        <tr>
+                            <th>Heure</th>
+                            <th>Fournisseur</th>
+                            <th>Palettes</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>07:00</td>
+                            <td>TOP Fraîcheur</td>
+                            <td>21</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>07:00</td>
+                            <td>Soric</td>
+                            <td>20</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>07:30</td>
+                            <td>SRPP</td>
+                            <td>25</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>08:00</td>
+                            <td>Brasserie Dalons</td>
+                            <td>24</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>08:30</td>
+                            <td>Confortech</td>
+                            <td>10</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>09:00</td>
+                            <td>Payet Lucien</td>
+                            <td>25</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>09:30</td>
+                            <td>Jardin Import</td>
+                            <td>10</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>09:30</td>
+                            <td>Edena Lot 1</td>
+                            <td>30</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr>
+                            <td>10:00</td>
+                            <td>Jina Shoes</td>
+                            <td>2</td>
+                            <td>Stock</td>
+                        </tr>
+                        <tr class="alert-row">
+                            <td>10:30</td>
+                            <td>⚠️ Edena Lot 2 (IMPRÉVU)</td>
+                            <td>33</td>
+                            <td><strong>CROSS-DOCKING</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TAB 2: MISSION BINÔME -->
+            <div id="binome" class="tab-content">
+                <div class="mission-card">
+                    <h3><span class="icon">👥</span>Mission Binôme Landry & Nolan</h3>
+                    <p style="font-size: 1.1em;">Gestion du Flux Entrant - Responsabilité Quai</p>
+                </div>
+
+                <div class="mission-section">
+                    <h4>🎯 Votre Défi du Jour</h4>
+                    <p style="font-size: 1.05em; line-height: 1.8;">
+                        Vous êtes responsables de la réception et du déchargement de <strong>11 camions (dont 1 imprévu)</strong>. 
+                        Vous disposez de <strong>5 quais de déchargement maximum</strong>. Votre efficacité détermine si Clément peut travailler dans de bonnes conditions ou si le quai devient un goulet d'étranglement.
+                    </p>
+                </div>
+
+                <div class="success-box">
+                    <h4 style="color: #155724; margin-bottom: 10px;">🎯 MISSION CRITIQUE : Dimensionnement de l'Équipe Quai</h4>
+                    <p style="font-size: 1.05em; line-height: 1.8;"><strong>Vous devez calculer combien d'opérateurs sont nécessaires pour terminer tous les déchargements avant 13h00.</strong></p>
+                    <p style="margin-top: 10px;">Cette question est au cœur de votre mission. Un sous-dimensionnement bloque toute la chaîne, un sur-dimensionnement coûte cher.</p>
+                </div>
+
+                <div class="alert-box">
+                    <h4 style="color: #856404; margin-bottom: 10px;">⚡ Dilemme Stratégique</h4>
+                    <p><strong>Quand devez-vous être à 2 opérateurs sur un même camion ?</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>À 1 opérateur : 4 min/palette</li>
+                        <li>À 2 opérateurs : 2 min/palette</li>
+                        <li>⚠️ Si le quai est saturé de palettes, Clément ne peut plus circuler !</li>
+                        <li>🚪 Vous avez seulement 5 quais disponibles - Gérez les bien !</li>
+                    </ul>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">📋 Vos Livrables</h3>
+
+                <div class="mission-section">
+                    <h4>1️⃣ Planigramme des Quais</h4>
+                    <p>Construisez un planning visuel montrant :</p>
+                    <ul>
+                        <li>Quel camion arrive à quelle heure</li>
+                        <li>Sur quel quai (1 à 5) il est affecté</li>
+                        <li>Qui décharge (opérateur seul ou binôme)</li>
+                        <li>Durée prévisionnelle du déchargement</li>
+                        <li>Occupation des 5 quais dans le temps</li>
+                    </ul>
+                </div>
+
+                <div class="mission-section">
+                    <h4>2️⃣ Planning d'Affectation</h4>
+                    <p>Document précisant :</p>
+                    <ul>
+                        <li>Chronologie des opérations sur chaque quai</li>
+                        <li>Répartition des tâches entre opérateurs</li>
+                        <li>Moments critiques où vous devez être à 2</li>
+                        <li>Gestion de l'aléa à 10h30 (quel quai ?)</li>
+                        <li>Calcul des temps de déchargement pour chaque camion</li>
+                    </ul>
+                </div>
+
+                <div class="mission-section">
+                    <h4>3️⃣ Dimensionnement de l'Équipe (NOUVEAU)</h4>
+                    <p><strong>Question clé :</strong> Combien d'opérateurs minimum faut-il pour terminer avant 13h00 ?</p>
+                    <ul>
+                        <li>Calculer la charge totale de travail en minutes</li>
+                        <li>Déterminer le temps disponible par opérateur</li>
+                        <li>Calculer le nombre d'opérateurs nécessaires</li>
+                        <li>Justifier votre réponse avec les calculs détaillés</li>
+                    </ul>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">⚠️ Pièges à Éviter</h3>
+
+                <div class="danger-box">
+                    <h4 style="color: #dc3545;">🚨 Les 7 Erreurs Fatales</h4>
+                    <ol style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Saturation des quais</strong> : Ne pas gérer les 5 quais de façon optimale</li>
+                        <li><strong>Accumulation de palettes</strong> : Ne jamais laisser trop de palettes s'accumuler sur le quai</li>
+                        <li><strong>Mauvaise synchronisation</strong> : Si vous déchargez trop vite, Clément est débordé</li>
+                        <li><strong>Sous-dimensionnement</strong> : Pas assez d'opérateurs = travail non terminé à 13h</li>
+                        <li><strong>Sur-dimensionnement</strong> : Trop d'opérateurs = coûts inutiles</li>
+                        <li><strong>Oublier l'aléa</strong> : Ne pas anticiper le camion de 10h30 avec 33 palettes</li>
+                        <li><strong>Négliger la sécurité</strong> : Oublier les 15 min fixes (mise à quai + papiers)</li>
+                    </ol>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">🧮 Vos Calculs à Effectuer</h3>
+
+                <div class="info-box">
+                    <h4 style="color: #0c5460; margin-bottom: 15px;">📐 Questions à Résoudre</h4>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>Calculer le temps de déchargement pour chaque camion (selon 1 ou 2 opérateurs)</li>
+                        <li>Déterminer l'occupation de chaque quai dans le temps</li>
+                        <li>Identifier les moments où tous les quais sont occupés</li>
+                        <li>Calculer le taux d'occupation moyen des quais</li>
+                        <li>Prévoir à quel moment libérer un quai pour l'aléa de 10h30</li>
+                        <li><strong style="color: #dc3545;">CALCUL CRITIQUE : Combien d'opérateurs minimum pour finir avant 13h00 ?</strong></li>
+                    </ol>
+                </div>
+
+                <div class="info-box">
+                    <h4 style="color: #0c5460; margin-bottom: 15px;">💡 Aide au Dimensionnement</h4>
+                    <div class="formula-box">
+                        <strong>Étape 1 :</strong> Calculer la charge totale de déchargement<br>
+                        • Additionner tous les temps de déchargement (15 min + palettes)<br>
+                        • Ne pas oublier l'aléa de 10h30<br><br>
+
+                        <strong>Étape 2 :</strong> Déterminer le temps disponible<br>
+                        • Vacation : 7h00 à 13h00 = ? heures<br>
+                        • Pause éventuelle à déduire<br><br>
+
+                        <strong>Étape 3 :</strong> Calculer l'effectif<br>
+                        • Nb opérateurs = Charge totale ÷ Temps disponible par opérateur<br>
+                        • Arrondir au supérieur<br><br>
+
+                        <strong>Attention :</strong> Les opérateurs peuvent travailler en parallèle sur plusieurs quais !
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: MISSION CLÉMENT -->
+            <div id="clement" class="tab-content">
+                <div class="mission-card">
+                    <h3><span class="icon">📦</span>Mission Clément - Responsable Stock</h3>
+                    <p style="font-size: 1.1em;">Gestion du Stockage et Évacuation du Quai</p>
+                </div>
+
+                <div class="mission-section">
+                    <h4>🎯 Votre Défi du Jour</h4>
+                    <p style="font-size: 1.05em; line-height: 1.8;">
+                        Vous êtes le <strong>maillon critique</strong> de la chaîne. Votre mission : évacuer toutes les palettes déchargées par le binôme Quai et les ranger dans les palettiers. Si vous prenez du retard, c'est toute l'opération qui coince.
+                    </p>
+                </div>
+
+                <div class="success-box">
+                    <h4 style="color: #155724; margin-bottom: 10px;">🎯 MISSION CRITIQUE : Dimensionnement de l'Équipe Caristes</h4>
+                    <p style="font-size: 1.05em; line-height: 1.8;"><strong>Vous devez calculer combien de caristes sont nécessaires pour ranger toutes les palettes avant 13h00.</strong></p>
+                    <p style="margin-top: 10px;">Cette question détermine si votre équipe stock peut absorber le flux du quai.</p>
+                </div>
+
+                <div class="alert-box">
+                    <h4 style="color: #856404; margin-bottom: 10px;">⏱️ Votre Contrainte Temps</h4>
+                    <p><strong>Temps Unitaire (TU) : 4 minutes par palette</strong></p>
+                    <p>Ce temps inclut :</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Prendre la palette sur le quai</li>
+                        <li>Aller jusqu'à l'emplacement en palettier</li>
+                        <li>Ranger la palette</li>
+                        <li>Revenir au quai pour la suivante</li>
+                    </ul>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">📋 Vos Missions Prioritaires</h3>
+
+                <div class="mission-section">
+                    <h4>1️⃣ Calcul de Charge de Travail</h4>
+                    <p><strong>Question clé :</strong> Quelle est votre charge de travail théorique totale en minutes pour cette matinée ?</p>
+                    <div class="formula-box" style="margin-top: 15px;">
+                        <strong>À calculer :</strong><br>
+                        • Nombre total de palettes à traiter<br>
+                        • Charge totale = ? palettes × 4 min/palette = ? minutes
+                    </div>
+                    <div class="alert-box" style="margin-top: 15px;">
+                        <p><strong>⚠️ ATTENTION à l'aléa !</strong></p>
+                        <p>Le camion de 10h30 apporte 33 palettes en <strong>CROSS-DOCKING</strong>. Ces palettes doivent-elles être comptabilisées dans votre charge ? Réfléchissez bien !</p>
+                        <p style="margin-top: 10px;"><em>Indice : Cross-Docking = Transit immédiat, pas de mise en stock...</em></p>
+                    </div>
+                </div>
+
+                <div class="mission-section">
+                    <h4>2️⃣ Dimensionnement de l'Équipe</h4>
+                    <p><strong>Question stratégique :</strong> Combien de caristes minimum faut-il dans votre équipe ?</p>
+                    <div class="formula-box" style="margin-top: 15px;">
+                        <strong>Données :</strong><br>
+                        • Vacation : 6 heures (7h00 - 13h00)<br>
+                        • Pause obligatoire : 30 minutes<br>
+                        • Temps effectif par cariste : ? minutes<br><br>
+                        <strong>À calculer :</strong><br>
+                        • Capacité d'un cariste = ? minutes<br>
+                        • Nombre de caristes = Charge totale ÷ Capacité = ?<br>
+                        • (Arrondir au supérieur)
+                    </div>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">⚠️ Pièges à Éviter</h3>
+
+                <div class="danger-box">
+                    <h4 style="color: #dc3545;">🚨 Les Erreurs Critiques</h4>
+                    <ol style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Mauvais calcul des palettes</strong> : Confondre stock et cross-docking</li>
+                        <li><strong>Oublier la pause</strong> : Un cariste ne travaille pas 6h mais moins</li>
+                        <li><strong>Arrondir à l'inférieur</strong> : Toujours arrondir au supérieur pour l'effectif</li>
+                        <li><strong>Ne pas anticiper les pics</strong> : Regardez quand arrivent les gros volumes</li>
+                        <li><strong>Sous-estimer la fatigue</strong> : Le rythme doit être soutenable sur 6h</li>
+                    </ol>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">🧮 Vos Calculs à Effectuer</h3>
+
+                <div class="info-box">
+                    <h4 style="color: #0c5460; margin-bottom: 15px;">📐 Questions à Résoudre</h4>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>Quel est le nombre total de palettes (tous camions) ?</li>
+                        <li>Combien de palettes sont en Cross-Docking (ne vont pas en stock) ?</li>
+                        <li>Combien de palettes doivent être rangées en stock ?</li>
+                        <li>Quelle est la charge totale de travail en minutes ?</li>
+                        <li>Quelle est la capacité effective d'un cariste (en minutes) ?</li>
+                        <li><strong style="color: #dc3545;">CALCUL CRITIQUE : Combien de caristes minimum pour finir avant 13h00 ?</strong></li>
+                        <li>Est-ce que cet effectif permet de tenir le rythme sur 6h ?</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- TAB 4: DONNÉES TECHNIQUES -->
+            <div id="donnees" class="tab-content">
+                <h2 style="color: #2a5298; margin-bottom: 20px;">📊 Données Techniques</h2>
+
+                <div class="mission-card">
+                    <h3><span class="icon">⏱️</span>Temps de Déchargement (Binôme Quai)</h3>
+                    <div class="mission-section">
+                        <h4>Temps Fixes</h4>
+                        <div class="formula-box">
+                            <strong>Mise à quai + Contrôle papiers = 15 minutes</strong><br>
+                            <small>Par camion, incompressible</small>
+                        </div>
+                    </div>
+                    <div class="mission-section">
+                        <h4>Temps de Manutention (variable)</h4>
+                        <div class="formula-box">
+                            <strong>1 opérateur :</strong> 4 minutes par palette<br>
+                            <strong>2 opérateurs :</strong> 2 minutes par palette
+                        </div>
+                    </div>
+                    <div class="mission-section">
+                        <h4>Formule à Appliquer</h4>
+                        <div class="formula-box">
+                            <strong>Temps Total Déchargement = 15 + (Nb_palettes × Temps_unitaire)</strong><br><br>
+                            • Temps_unitaire = 4 min (si 1 opérateur)<br>
+                            • Temps_unitaire = 2 min (si 2 opérateurs)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mission-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h3><span class="icon">📦</span>Temps de Rangement (Clément - Stock)</h3>
+                    <div class="mission-section">
+                        <h4>Temps Unitaire (TU)</h4>
+                        <div class="formula-box">
+                            <strong>TU = 4 minutes par palette</strong><br>
+                            <small>Cycle complet : Prendre au quai → Aller en palettier → Ranger → Retour</small>
+                        </div>
+                    </div>
+                    <div class="mission-section">
+                        <h4>Données Cariste</h4>
+                        <div class="formula-box">
+                            <strong>Vacation :</strong> 6 heures (7h00 - 13h00)<br>
+                            <strong>Pause obligatoire :</strong> 30 minutes<br>
+                            <strong>Temps effectif à calculer :</strong> ? minutes
+                        </div>
+                    </div>
+                    <div class="mission-section">
+                        <h4>Formules de Dimensionnement</h4>
+                        <div class="formula-box">
+                            <strong>Charge totale (min) =</strong> Nb_palettes_stock × 4<br><br>
+                            <strong>Capacité cariste (min) =</strong> (Vacation en min) - (Pause en min)<br><br>
+                            <strong>Nb_caristes =</strong> Charge_totale ÷ Capacité<br>
+                            <small>(arrondir au supérieur)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">🏭 Infrastructure</h3>
+
+                <div class="info-box">
+                    <h4 style="color: #0c5460; margin-bottom: 15px;">🚪 Contrainte des Quais</h4>
+                    <div class="formula-box">
+                        <strong>Nombre de quais disponibles :</strong> 5 quais maximum<br>
+                        <strong>Contrainte :</strong> Maximum 5 camions simultanément en déchargement
+                    </div>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">📈 Tableau Récapitulatif des Paramètres</h3>
+
+                <table class="truck-table">
+                    <thead>
+                        <tr>
+                            <th>Paramètre</th>
+                            <th>Valeur</th>
+                            <th>Unité</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Nombre de quais</td>
+                            <td>5</td>
+                            <td>quais</td>
+                            <td>Maximum simultané</td>
+                        </tr>
+                        <tr>
+                            <td>Mise à quai + papiers</td>
+                            <td>15</td>
+                            <td>min/camion</td>
+                            <td>Temps fixe incompressible</td>
+                        </tr>
+                        <tr>
+                            <td>Déchargement (1 op)</td>
+                            <td>4</td>
+                            <td>min/palette</td>
+                            <td>Manutention individuelle</td>
+                        </tr>
+                        <tr>
+                            <td>Déchargement (2 op)</td>
+                            <td>2</td>
+                            <td>min/palette</td>
+                            <td>Manutention en binôme</td>
+                        </tr>
+                        <tr>
+                            <td>Rangement stock (TU)</td>
+                            <td>4</td>
+                            <td>min/palette</td>
+                            <td>Cycle complet aller-retour</td>
+                        </tr>
+                        <tr>
+                            <td>Vacation</td>
+                            <td>6</td>
+                            <td>heures</td>
+                            <td>7h00 - 13h00</td>
+                        </tr>
+                        <tr>
+                            <td>Pause obligatoire</td>
+                            <td>30</td>
+                            <td>minutes</td>
+                            <td>Réglementaire</td>
+                        </tr>
+                        <tr class="alert-row">
+                            <td>Total palettes</td>
+                            <td>233</td>
+                            <td>palettes</td>
+                            <td>Tous camions confondus</td>
+                        </tr>
+                        <tr class="alert-row">
+                            <td>Type Cross-Docking</td>
+                            <td>33</td>
+                            <td>palettes</td>
+                            <td>Edena Lot 2 - Transit</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TAB 5: PLANNING ARRIVAGES -->
+            <div id="planning" class="tab-content">
+                <h2 style="color: #2a5298; margin-bottom: 20px;">⏰ Planning des Arrivages</h2>
+
+                <div class="mission-card">
+                    <h3><span class="icon">📅</span>Vue d'ensemble de la Journée</h3>
+                    <p>Vacation de 7h00 à 13h00 - 11 camions à traiter sur 5 quais maximum</p>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <strong style="color: #2a5298; font-size: 1.2em;">07:00</strong>
+                            <p style="margin: 5px 0;"><strong>TOP Fraîcheur</strong> - 21 palettes</p>
+                            <p style="margin: 5px 0;"><strong>Soric</strong> - 20 palettes</p>
+                            <p style="font-size: 0.9em; color: #666;">🚨 Démarrage simultané - 2 camions en même temps</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <strong style="color: #2a5298; font-size: 1.2em;">07:30</strong>
+                            <p style="margin: 5px 0;"><strong>SRPP</strong> - 25 palettes</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <strong style="color: #2a5298; font-size: 1.2em;">08:00</strong>
+                            <p style="margin: 5px 0;"><strong>Brasserie Dalons</strong> - 24 palettes</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <strong style="color: #2a5298; font-size: 1.2em;">08:30</strong>
+                            <p style="margin: 5px 0;"><strong>Confortech</strong> - 10 palettes</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <strong style="color: #2a5298; font-size: 1.2em;">09:00</strong>
+                            <p style="margin: 5px 0;"><strong>Payet Lucien</strong> - 25 palettes</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <strong style="color: #2a5298; font-size: 1.2em;">09:30</strong>
+                            <p style="margin: 5px 0;"><strong>Jardin Import</strong> - 10 palettes</p>
+                            <p style="margin: 5px 0;"><strong>Edena Lot 1</strong> - 30 palettes</p>
+                            <p style="font-size: 0.9em; color: #666;">🚨 Double arrivée - 2 camions en même temps</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <strong style="color: #2a5298; font-size: 1.2em;">10:00</strong>
+                            <p style="margin: 5px 0;"><strong>Jina Shoes</strong> - 2 palettes</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content" style="background: #fff3cd; border-left: 4px solid #ffc107;">
+                            <strong style="color: #dc3545; font-size: 1.2em;">⚠️ 10:30 - ALÉA</strong>
+                            <p style="margin: 5px 0;"><strong>Edena Lot 2 (IMPRÉVU)</strong> - 33 palettes</p>
+                            <p style="font-size: 1em; color: #dc3545; font-weight: bold;">🚨 CROSS-DOCKING - Transit immédiat</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">📊 Tableau des Arrivages</h3>
+
+                <table class="truck-table">
+                    <thead>
+                        <tr>
+                            <th>Heure</th>
+                            <th>Fournisseur</th>
+                            <th>Palettes</th>
+                            <th>Type</th>
+                            <th>À Calculer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>07:00</td>
+                            <td>TOP Fraîcheur</td>
+                            <td>21</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>07:00</td>
+                            <td>Soric</td>
+                            <td>20</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>07:30</td>
+                            <td>SRPP</td>
+                            <td>25</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>08:00</td>
+                            <td>Brasserie Dalons</td>
+                            <td>24</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>08:30</td>
+                            <td>Confortech</td>
+                            <td>10</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>09:00</td>
+                            <td>Payet Lucien</td>
+                            <td>25</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>09:30</td>
+                            <td>Jardin Import</td>
+                            <td>10</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>09:30</td>
+                            <td>Edena Lot 1</td>
+                            <td>30</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr>
+                            <td>10:00</td>
+                            <td>Jina Shoes</td>
+                            <td>2</td>
+                            <td>Stock</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                        <tr class="alert-row">
+                            <td>10:30</td>
+                            <td>⚠️ Edena Lot 2 (IMPRÉVU)</td>
+                            <td>33</td>
+                            <td>CROSS-DOCKING</td>
+                            <td>Temps déchargement</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="color: #2a5298; margin: 30px 0 15px 0;">🧮 Travail à Réaliser</h3>
+
+                <div class="info-box">
+                    <h4 style="color: #0c5460; margin-bottom: 15px;">📐 Vos Calculs sur ce Planning</h4>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>Calculer le temps de déchargement de chaque camion</li>
+                        <li>Déterminer sur quel quai (1 à 5) affecter chaque camion</li>
+                        <li>Identifier les moments où les 5 quais sont saturés</li>
+                        <li>Calculer quand chaque camion sera libéré</li>
+                        <li>Vérifier si tous les camions peuvent être traités avant 13h00</li>
+                        <li>Prévoir comment intégrer l'aléa de 10h30</li>
+                        <li><strong style="color: #dc3545;">Dimensionner l'équipe : Combien d'opérateurs pour terminer à 13h00 ?</strong></li>
+                    </ol>
+                </div>
+
+                <div class="danger-box" style="margin-top: 30px;">
+                    <h4 style="color: #dc3545;">🎯 Points de Vigilance</h4>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>07:00 :</strong> 2 camions arrivent en même temps (41 palettes au total)</li>
+                        <li><strong>09:30 :</strong> 2 camions arrivent en même temps (40 palettes au total)</li>
+                        <li><strong>10:30 :</strong> Aléa imprévu - 33 palettes Cross-Docking</li>
+                        <li><strong>Contrainte :</strong> Seulement 5 quais disponibles</li>
+                        <li><strong>Fin vacation :</strong> Tout doit être terminé à 13h00</li>
+                        <li><strong style="color: #dc3545;">Question critique :</strong> Combien d'opérateurs faut-il prévoir ?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion des onglets
+        function showTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
