@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scénario Pédagogique - ECF Blanc AT1 CP3 Fournaise Glacée</title>
+  <style>
+    :root {
+      --primary: #1a3a5c;
+      --secondary: #2e86ab;
+      --accent: #f18f01;
+      --light: #f0f4f8;
+      --pause-bg: #e8f5e9;
+      --pause-border: #43a047;
+      --text: #1e1e1e;
+      --muted: #555;
+      --radius: 8px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #e9eef3;
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 28px 32px 20px;
+      border-bottom: 4px solid var(--accent);
+    }
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    header h2 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: #a8c8e8;
+      margin-bottom: 16px;
+    }
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .meta-badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .meta-badge .icon { font-size: 1rem; }
+
+    /* LEGEND */
+    .legend {
+      background: var(--light);
+      padding: 14px 32px;
+      border-bottom: 1px solid #dce4ec;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .legend-title {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-right: 4px;
+    }
+    .badge {
+      display: inline-block;
+      border-radius: 12px;
+      padding: 3px 11px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .badge-active       { background: #dbeafe; color: #1d4ed8; }
+    .badge-expositive   { background: #ede9fe; color: #6d28d9; }
+    .badge-interrogative{ background: #fef9c3; color: #92400e; }
+    .badge-formelle     { background: #dcfce7; color: #166534; }
+    .badge-nonformelle  { background: #fce7f3; color: #9d174d; }
+    .badge-diagnostique { background: #ffedd5; color: #c2410c; }
+
+    /* TABLE CONTAINER */
+    .table-container {
+      overflow-x: auto;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead tr {
+      background: var(--primary);
+      color: white;
+    }
+    thead th {
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      white-space: nowrap;
+    }
+    thead th:last-child { border-right: none; }
+
+    tbody tr { border-bottom: 1px solid #e2e8f0; }
+    tbody tr:hover { background: #f7fafc; }
+
+    tbody td {
+      padding: 12px 14px;
+      vertical-align: top;
+      border-right: 1px solid #e2e8f0;
+      line-height: 1.5;
+    }
+    tbody td:last-child { border-right: none; }
+
+    /* TIME CELL */
+    .time-cell {
+      white-space: nowrap;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+    .duration {
+      display: block;
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 2px;
+    }
+
+    /* PAUSE ROWS */
+    tr.pause-row td {
+      background: var(--pause-bg);
+      border-left: 4px solid var(--pause-border);
+      text-align: center;
+      font-weight: 600;
+      color: #2e7d32;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+    }
+
+    /* PHASE INDICATOR */
+    .phase-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-right: 7px;
+      flex-shrink: 0;
+    }
+    .phase-title {
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 5px;
+    }
+
+    /* OBJECTIVE CELL */
+    .bloom-tag {
+      display: inline-block;
+      background: var(--secondary);
+      color: white;
+      border-radius: 10px;
+      padding: 2px 9px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+    .obj-section { margin-bottom: 5px; font-size: 0.83rem; }
+    .obj-label {
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    /* TOOLS */
+    .tool-pill {
+      display: inline-block;
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+      border-radius: 10px;
+      padding: 2px 9px;
+      font-size: 0.78rem;
+      margin: 2px 2px 2px 0;
+    }
+
+    /* ALTERNATIVE */
+    .alt-cell {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .alt-cell::before {
+      content: "↪ ";
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* POINTS BADGE */
+    .points-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      border-radius: 10px;
+      padding: 2px 9px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--primary);
+      color: #a8c8e8;
+      text-align: center;
+      padding: 14px 32px;
+      font-size: 0.82rem;
+    }
+    footer span { color: var(--accent); font-weight: 600; }
+
+    /* TOTAL BAR */
+    .total-bar {
+      background: var(--light);
+      border-top: 2px solid var(--secondary);
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+    .total-bar .total-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .total-bar .total-label { color: var(--muted); font-weight: 500; }
+    .total-bar .total-value {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1rem;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; }
+      thead { display: table-header-group; }
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 18px 16px; }
+      thead th, tbody td { padding: 9px 10px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>📋 Scénario Pédagogique — ECF Blanc</h1>
+    <h2>AT1 CP3 · Étude de cas : <em>Fournaise Glacée</em></h2>
+    <div class="header-meta">
+      <div class="meta-badge"><span class="icon">👤</span> Formateur : Sylvain GORECKI</div>
+      <div class="meta-badge"><span class="icon">📅</span> Durée totale : 8h (08h30 – 16h30)</div>
+      <div class="meta-badge"><span class="icon">🎯</span> Titre visé : TSMEL / TLE</div>
+      <div class="meta-badge"><span class="icon">⚖️</span> Barème total : 30 pts</div>
+      <div class="meta-badge"><span class="icon">📍</span> Réunion Island</div>
+    </div>
+  </header>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="legend-title">Méthodes :</span>
+    <span class="badge badge-active">Active</span>
+    <span class="badge badge-expositive">Expositive</span>
+    <span class="badge badge-interrogative">Interrogative</span>
+    <span class="legend-title" style="margin-left:8px;">Évaluations :</span>
+    <span class="badge badge-formelle">Formative Formelle</span>
+    <span class="badge badge-nonformelle">Formative non-Formelle</span>
+    <span class="badge badge-diagnostique">Diagnostique</span>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:110px;">Horaire</th>
+          <th style="width:200px;">Objectifs pédagogiques</th>
+          <th style="width:220px;">Activité</th>
+          <th style="width:130px;">Méthode</th>
+          <th style="width:120px;">Évaluation</th>
+          <th style="width:160px;">Supports / Outils</th>
+          <th>Scénario alternatif</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- PHASE 1 -->
+        <tr>
+          <td class="time-cell">08h30 – 09h10<span class="duration">40 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Comprendre</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>À partir du sujet "Fournaise Glacée" et de ses 6 annexes.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Identification exacte des <strong>3 livrables</strong> attendus.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">1</span>Lancement &amp; Étude du sujet</div>
+            Accueil, présentation des objectifs de l'ECF Blanc. Lecture individuelle du sujet et des 6 annexes. Identification collective des livrables.
+          </td>
+          <td><span class="badge badge-expositive">Expositive</span><br><span class="badge badge-interrogative">Interrogative</span><br><span class="badge badge-active">Active</span></td>
+          <td><span class="badge badge-diagnostique">Diagnostique</span></td>
+          <td>
+            <span class="tool-pill">📄 Sujet Docx</span>
+            <span class="tool-pill">🎓 Google Classroom</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés de compréhension du sujet.</td>
+        </tr>
+
+        <!-- PHASE 2 -->
+        <tr>
+          <td class="time-cell">09h10 – 10h00<span class="duration">50 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Appliquer</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>Sur Excel avec les données brutes fournies.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Calcul exact du taux de service, taux d'erreurs et coûts logistiques.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">2</span>Partie 1 — Tableau de bord <span class="points-badge">10 pts</span></div>
+            Construction du tableau de bord sur 6 mois en autonomie. Le formateur observe et note les blocages.
+          </td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td><span class="badge badge-formelle">Formative Formelle</span></td>
+          <td>
+            <span class="tool-pill">💻 PC</span>
+            <span class="tool-pill">📊 Fichier Excel</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés avec les formules Excel.</td>
+        </tr>
+
+        <!-- PAUSE 1 -->
+        <tr class="pause-row">
+          <td>10h00 – 10h15</td>
+          <td colspan="6">☕ PAUSE — 15 minutes</td>
+        </tr>
+
+        <!-- PHASE 3 -->
+        <tr>
+          <td class="time-cell">10h15 – 11h05<span class="duration">50 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Créer</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>À partir du tableau de bord généré.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Création de <strong>4 graphiques</strong> avec lignes d'objectifs horizontales.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">3</span>Partie 2 — Graphiques <span class="points-badge">8 pts</span></div>
+            Finalisation du tableau de bord et création de l'onglet "GRAPHIQUES".
+          </td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td><span class="badge badge-formelle">Formative Formelle</span></td>
+          <td>
+            <span class="tool-pill">💻 PC</span>
+            <span class="tool-pill">📊 Excel</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés de mise en forme ou de création de graphiques.</td>
+        </tr>
+
+        <!-- PHASE 4 -->
+        <tr>
+          <td class="time-cell">11h05 – 11h55<span class="duration">50 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Analyser</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>En croisant données chiffrées et annexes (mails).</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Note contenant <strong>3 à 5 actions</strong> concrètes (ex : tutorat, backup).</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">4</span>Partie 3 — Note d'analyse <span class="points-badge">12 pts</span></div>
+            Rédaction de la note logistique et du plan d'actions. Dépôt final sur Classroom.
+          </td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td><span class="badge badge-formelle">Formative Formelle</span></td>
+          <td>
+            <span class="tool-pill">💻 PC</span>
+            <span class="tool-pill">📝 Word</span>
+            <span class="tool-pill">📊 Excel</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés de rédaction ou d'analyse.</td>
+        </tr>
+
+        <!-- PAUSE DÉJEUNER -->
+        <tr class="pause-row">
+          <td>11h55 – 13h00</td>
+          <td colspan="6">🍽️ PAUSE DÉJEUNER — 1h05</td>
+        </tr>
+
+        <!-- PHASE 5 -->
+        <tr>
+          <td class="time-cell">13h00 – 13h50<span class="duration">50 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Évaluer</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>À l'aide de la grille de correction officielle.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Justification des points sur <strong>≥ 80%</strong> des items.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">5</span>Autocorrection / Correction croisée</div>
+            Les apprenants évaluent leur propre fichier ou celui d'un pair sur 30 pts via la grille officielle.
+          </td>
+          <td><span class="badge badge-active">Active</span><br><span class="badge badge-interrogative">Interrogative</span></td>
+          <td><span class="badge badge-nonformelle">Formative non-Formelle</span></td>
+          <td>
+            <span class="tool-pill">📋 Grille correction Docx</span>
+            <span class="tool-pill">📂 CSV</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés d'interprétation du barème.</td>
+        </tr>
+
+        <!-- PHASE 6 -->
+        <tr>
+          <td class="time-cell">13h50 – 14h40<span class="duration">50 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Comprendre</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>En groupe entier via projection du corrigé.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Résolution collective des erreurs fréquentes.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">6</span>Correction collective — Débriefing</div>
+            Reprise par le formateur des blocages Excel, formules complexes et liens de causalité (ex : panne camion).
+          </td>
+          <td><span class="badge badge-expositive">Expositive</span><br><span class="badge badge-active">Active</span></td>
+          <td><span class="badge badge-nonformelle">Formative non-Formelle</span></td>
+          <td>
+            <span class="tool-pill">📊 Excel corrigé projeté</span>
+            <span class="tool-pill">🖥️ Vidéoprojecteur</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés de compréhension de la correction.</td>
+        </tr>
+
+        <!-- PHASE 7 -->
+        <tr>
+          <td class="time-cell">14h40 – 15h00<span class="duration">20 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Évaluer</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>Via un questionnaire numérique.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>100% de participation &amp; score moyen <strong>&gt; 75%</strong>.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">7</span>Quiz interactif</div>
+            Retour sur les pièges du sujet Fournaise Glacée via Microsoft Forms.
+          </td>
+          <td><span class="badge badge-interrogative">Interrogative</span></td>
+          <td><span class="badge badge-formelle">Formative Formelle</span></td>
+          <td>
+            <span class="tool-pill">📱 Microsoft Forms</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés d'accès ou de connexion au Quiz.</td>
+        </tr>
+
+        <!-- PAUSE 2 -->
+        <tr class="pause-row">
+          <td>15h00 – 15h10</td>
+          <td colspan="6">☕ PAUSE — 10 minutes</td>
+        </tr>
+
+        <!-- PHASE 8 -->
+        <tr>
+          <td class="time-cell">15h10 – 16h00<span class="duration">50 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Synthétiser</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>En groupe via outil collaboratif.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Identification de <strong>3 bonnes pratiques</strong> de gestion du temps.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">8</span>Débriefing "Méthode d'examen"</div>
+            Tour de table : gestion du temps, stress, lecture efficace des annexes. Prise de notes collaborative sur Canvas.
+          </td>
+          <td><span class="badge badge-active">Active</span><br><span class="badge badge-interrogative">Interrogative</span></td>
+          <td><span class="badge badge-nonformelle">Formative non-Formelle</span></td>
+          <td>
+            <span class="tool-pill">🎨 Canvas</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés de formulation à l'oral.</td>
+        </tr>
+
+        <!-- PHASE 9 -->
+        <tr>
+          <td class="time-cell">16h00 – 16h30<span class="duration">30 min</span></td>
+          <td>
+            <span class="bloom-tag">Bloom : Planifier</span>
+            <div class="obj-section"><span class="obj-label">Condition :</span><br>Individuellement sur fiche de suivi.</div>
+            <div class="obj-section"><span class="obj-label">Critère :</span><br>Formulation d'au moins <strong>2 thématiques</strong> à approfondir avant l'examen final.</div>
+          </td>
+          <td>
+            <div class="phase-title"><span class="phase-number">9</span>Plan d'action personnel</div>
+            Les apprenants remplissent leur carnet de bord pour cibler leurs révisions post-ECF blanc.
+          </td>
+          <td><span class="badge badge-active">Active</span></td>
+          <td><span class="badge badge-diagnostique">Diagnostique</span></td>
+          <td>
+            <span class="tool-pill">📄 Fiche de remédiation Docx</span>
+          </td>
+          <td class="alt-cell">Aide personnalisée si difficultés à cibler ses propres axes de progrès.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TOTAL BAR -->
+  <div class="total-bar">
+    <div class="total-item">
+      <span class="total-label">⏱ Temps actif total :</span>
+      <span class="total-value">6h20 (9 phases)</span>
+    </div>
+    <div class="total-item">
+      <span class="total-label">☕ Pauses :</span>
+      <span class="total-value">1h40</span>
+    </div>
+    <div class="total-item">
+      <span class="total-label">⚖️ Points évalués :</span>
+      <span class="total-value">10 + 8 + 12 = <strong>30 pts</strong></span>
+    </div>
+    <div class="total-item">
+      <span class="total-label">🎯 Niveaux Bloom :</span>
+      <span class="total-value">Comprendre → Analyser → Évaluer → Créer</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Scénario pédagogique · ECF Blanc AT1 CP3 · <span>Fournaise Glacée</span> · Formateur : <span>Sylvain GORECKI</span> · TSMEL / TLE · Réunion Island
+  </footer>
+
+</div>
+</body>
+</html>
