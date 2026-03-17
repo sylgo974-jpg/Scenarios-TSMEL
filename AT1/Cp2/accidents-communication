@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation TSMEL - Gestion des Accidents & Pilotage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .case-study { border-left: 5px solid #2563eb; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <header class="bg-blue-900 text-white p-6 shadow-lg no-print">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold">Ingénierie Pédagogique : Titre TSMEL</h1>
+            <p class="text-blue-200">Module : Gestion des Accidents & Pilotage de l'Exploitation (AT1)</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto py-8 px-4">
+
+        <section class="mb-12 bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4 border-b-2 border-blue-100 pb-2">1. Progression Pédagogique (7h)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-3 border">Horaire</th>
+                            <th class="p-3 border">Axe de Formation</th>
+                            <th class="p-3 border">Objectif Pédagogique Visé</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-3 border font-semibold">08:30 - 10:00</td>
+                            <td class="p-3 border text-blue-700 font-medium">Objectif 1 : Organiser & Réguler</td>
+                            <td class="p-3 border">Anticiper les risques lors de la planification (DUERP, coactivité).</td>
+                        </tr>
+                        <tr class="bg-blue-50">
+                            <td class="p-3 border font-semibold">10:15 - 12:00</td>
+                            <td class="p-3 border text-green-700 font-medium">Objectif 2 : Manager les équipes</td>
+                            <td class="p-3 border">Gérer l'immédiateté de l'accident et la communication descendante.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 border font-semibold">13:00 - 15:00</td>
+                            <td class="p-3 border text-orange-700 font-medium">Objectif 3 : Traiter les dérives</td>
+                            <td class="p-3 border">Analyser les causes racines (Arbre des causes) et définir des CAPA.</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="p-3 border font-semibold">15:15 - 16:30</td>
+                            <td class="p-3 border text-red-700 font-medium">Objectif 4 : Communication Anglais</td>
+                            <td class="p-3 border">Reporting de l'incident au siège européen (Situation 3 ECF).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <h2 class="text-3xl font-bold text-gray-700 mb-6">2. Études de Cas Opérationnelles</h2>
+
+        <article class="case-study bg-white p-8 rounded-lg shadow-md mb-8">
+            <div class="flex justify-between items-start">
+                <h3 class="text-xl font-bold text-blue-600 uppercase italic">Étude de Cas #1 : Anticipation (Objectif 1)</h3>
+                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">DURÉE : 1h30</span>
+            </div>
+            <p class="mt-4 text-gray-600 font-medium">Contexte : Intégration de 10 intérimaires en période de pic d'activité (Printemps).</p>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-50 p-4 rounded border">
+                    <h4 class="font-bold mb-2">Données Techniques :</h4>
+                    <ul class="list-disc ml-5 text-sm space-y-1">
+                        <li>Chariots : R489 Cat 1A, 3 et 5 en circulation simultanée.</li>
+                        <li>Stockage : Masse et Racks (Hauteur 10m).</li>
+                        <li>Risque majeur : Collision piéton/engin en zone de picking.</li>
+                    </ul>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                    <h4 class="font-bold mb-2">Travail à faire :</h4>
+                    <p class="text-sm">Établissez le <strong>Plan d'Accueil Sécurité</strong> spécifique à cette zone. Comment régulez-vous les flux pour isoler les piétons des engins sans stopper la production ?</p>
+                </div>
+            </div>
+            <textarea class="w-full mt-4 p-3 border rounded-md h-24 placeholder-gray-400" placeholder="Réponse de l'apprenant..."></textarea>
+        </article>
+
+        <article class="case-study bg-white p-8 rounded-lg shadow-md mb-8" style="border-left-color: #16a34a;">
+            <div class="flex justify-between items-start">
+                <h3 class="text-xl font-bold text-green-600 uppercase italic">Étude de Cas #2 : Crise & Management (Objectif 2)</h3>
+                <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">DURÉE : 1h30</span>
+            </div>
+            <p class="mt-4 text-gray-600 font-medium">Scénario : Accident réel - Choc chariot élévateur contre préparateur (Quai n°4).</p>
+            <div class="mt-4 bg-red-50 p-4 rounded border border-red-200">
+                <h4 class="font-bold text-red-800 mb-2 italic">ALERTE !</h4>
+                <p class="text-sm text-red-900">Le blessé est au sol, conscient mais se plaint d'une vive douleur. L'équipe s'attroupe. Le planning de départ des camions est serré.</p>
+            </div>
+            <div class="mt-6">
+                <h4 class="font-bold mb-2">Livrables attendus :</h4>
+                <ol class="list-decimal ml-5 text-sm space-y-2">
+                    <li><strong>Action immédiate :</strong> Rédigez votre protocole PAS (Protéger, Alerter, Secourir).</li>
+                    <li><strong>Communication Descendante :</strong> Rédigez le message de remobilisation pour l'équipe afin d'éviter le "climat d'insécurité".</li>
+                    <li><strong>Communication Ascendante :</strong> Rédigez le SMS/Email flash pour votre Directeur de Site.</li>
+                </ol>
+            </div>
+            <textarea class="w-full mt-4 p-3 border rounded-md h-32" placeholder="Saisir les communications de crise..."></textarea>
+        </article>
+
+        <article class="case-study bg-white p-8 rounded-lg shadow-md" style="border-left-color: #ea580c;">
+            <div class="flex justify-between items-start">
+                <h3 class="text-xl font-bold text-orange-600 uppercase italic">Étude de Cas #3 : Analyse & English (Objectif 3 et 4)</h3>
+                <span class="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded">DURÉE : 2h00</span>
+            </div>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-bold mb-2 text-sm uppercase">Analyse technique (Arbre des causes) :</h4>
+                    <p class="text-xs text-gray-500 mb-2 italic">Identifiez les causes racines :</p>
+                    <ul class="list-disc ml-5 text-sm space-y-1">
+                        <li>Matériel : Alarme de recul HS.</li>
+                        <li>Humain : Pas de gilet haute visibilité porté.</li>
+                        <li>Organisation : Retard de 20 min sur le chargement.</li>
+                    </ul>
+                </div>
+                <div class="bg-blue-900 text-white p-4 rounded">
+                    <h4 class="font-bold mb-2">Reporting Anglais (ECF S3) :</h4>
+                    <p class="text-xs italic mb-2">Translate and summarize for HQ :</p>
+                    <p class="text-sm">"Explain the accident, the root cause (equipment failure + PPE missing) and your immediate corrective action plan."</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="block text-sm font-bold mb-1">Proposed Corrective Actions (CAPA) :</label>
+                <textarea class="w-full p-3 border rounded-md h-24 mb-4"></textarea>
+                <label class="block text-sm font-bold mb-1 text-blue-700">English Synthesis :</label>
+                <textarea class="w-full p-3 border border-blue-300 rounded-md h-24 bg-blue-50"></textarea>
+            </div>
+        </article>
+
+    </main>
+
+    <footer class="mt-12 bg-gray-200 p-8 text-center text-gray-600 no-print">
+        <p>© 2024 - Ingénierie Pédagogique Logistique - Titre Professionnel TSMEL</p>
+        <button onclick="window.print()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Imprimer le support stagiaire</button>
+    </footer>
+
+</body>
+</html>
